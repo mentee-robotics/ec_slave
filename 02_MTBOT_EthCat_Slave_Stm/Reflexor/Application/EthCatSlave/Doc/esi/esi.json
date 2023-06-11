@@ -1,0 +1,107 @@
+{
+  "form": {},
+  "od": {
+    "sdo": {},
+    "txpdo": {
+      "6000": {
+        "otype": "RECORD",
+        "name": "DataTxs",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "NoItems",
+            "dtype": "UNSIGNED8",
+            "data": "&Obj.DataTxs.NoItems",
+            "value": "4",
+            "access": "RO"
+          },
+          {
+            "name": "DataTx0",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RW",
+            "data": "&Obj.DataTxs.DataTx0"
+          },
+          {
+            "name": "DataTx1",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RW",
+            "data": "&Obj.DataTxs.DataTx1"
+          },
+          {
+            "name": "DataTx2",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RW",
+            "data": "&Obj.DataTxs.DataTx2"
+          },
+          {
+            "name": "DataTx3",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RW",
+            "data": "&Obj.DataTxs.DataTx3"
+          }
+        ],
+        "pdo_mappings": [
+          "txpdo"
+        ]
+      }
+    },
+    "rxpdo": {
+      "7004": {
+        "otype": "RECORD",
+        "name": "DataRxs",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "NoItems",
+            "dtype": "UNSIGNED8",
+            "data": "&Obj.DataRxs.NoItems",
+            "value": "4",
+            "access": "RO"
+          },
+          {
+            "name": "DataRx0",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RW",
+            "data": "&Obj.DataRxs.DataRx0"
+          },
+          {
+            "name": "DataRx1",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RW",
+            "data": "&Obj.DataRxs.DataRx1"
+          },
+          {
+            "name": "DataRx2",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RW",
+            "data": "&Obj.DataRxs.DataRx2"
+          },
+          {
+            "name": "DataRx3",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RW",
+            "data": "&Obj.DataRxs.DataRx3"
+          }
+        ],
+        "pdo_mappings": [
+          "rxpdo"
+        ]
+      }
+    }
+  },
+  "dc": []
+}
