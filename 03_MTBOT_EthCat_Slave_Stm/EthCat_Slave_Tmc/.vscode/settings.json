@@ -1,0 +1,20 @@
+{
+   "files.associations": {
+      "constants.h": "c",
+      "tmc8462_register.h": "c",
+      "tmc8462.h": "c",
+      "api_header.h": "c",
+      "freertos.h": "c",
+      "stdbool.h": "c",
+      "gpio.h": "c",
+      "main.h": "c",
+      "stm32f4xx_hal.h": "c",
+      "spi.h": "c",
+      "spidma.h": "c",
+      "event_groups.h": "c",
+      "string.h": "c",
+      "apptest_tmc8462a.h": "c",
+      "esc_hw.h": "c",
+      "utypes.h": "c"
+   }
+}

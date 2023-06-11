@@ -1,0 +1,15 @@
+!SESSION 2023-04-30 11:37:21.216 -----------------------------------------------
+eclipse.buildId=Version 1.12.1
+java.version=11.0.17
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_IL
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2023-04-30 11:37:54.062
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2023-04-30 11:37:54.064
+!MESSAGE Log4j2 initialized with config file /home/administrator/Project/MTBOT/03_MTBOT_EthCat_Slave_Stm/EthCat_Slave_Tmc/.metadata/.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2023-04-30 11:37:56.830
+!MESSAGE Started RMI Server, listening on port 41337
