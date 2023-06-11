@@ -1,1 +1,0 @@
- $(MP_EXTRA_CC_PRE) -mcpu=cortex-m4  -x c -c -D__$(MP_PROCESSOR_OPTION)__  -mthumb ${PACK_COMMON_OPTIONS}  -Os -ffunction-sections -mlong-calls -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD) D:\Project\Freelancer\EtherCAT2Spi\02_Source\03_MTBOT_lan9252evb\02_MTBOT_EthCat_Slave.X\startup_samd51j19a.c
