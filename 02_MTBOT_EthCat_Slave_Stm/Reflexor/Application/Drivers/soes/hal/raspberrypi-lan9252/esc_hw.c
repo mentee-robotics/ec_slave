@@ -414,7 +414,7 @@ void ESC_write (uint16_t address, void *buf, uint16_t len)
          else if (size == 3)
          {
             size = 1;
-         }
+         } 
          /* else size is kept AS IS */
          ESC_write_csr(address, temp_buf, size);
 

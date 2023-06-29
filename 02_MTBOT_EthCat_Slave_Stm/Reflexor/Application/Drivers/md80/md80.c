@@ -27,6 +27,11 @@
  *                                            FUNCTION DEFINATIONS
  *-------------------------------------------------------------------------------------------------------------------*/
 
+static void md80_PackImpedanceFrame(tMd80_Device *const me);
+static void md80_PackPositionFrame(tMd80_Device *const me);
+static void md80_PackVelocityFrame(tMd80_Device *const me);
+static void md80_PackMotionTargetsFrame(tMd80_Device *const me);
+
 static uint8_t md80_getSize(uint16_t regId)
 {
    switch (regId)
@@ -226,10 +231,12 @@ static bool md80_Transmit(tMd80_Device *const me, uint32_t timeout)
 
 void md80_Init(tMd80_Device *const me)
 {
+
 }
 
 void md80_Deinit(tMd80_Device *const me)
 {
+
 }
 
 void md80_UpdateRespondeData(tMd80_Device *const me, tMd80_ResponseFrame *const respFrame)
@@ -263,6 +270,23 @@ bool md80_ConfigBlink(tMd80_Device *const me)
    return ret;
 }
 
+bool md80_setupCalibration (tMd80_Device *const me)
+{
+   bool ret  = false;
+
+   me->local.command.toMd80.data[0] = MD80_FRAME_CALIBRATION;
+   me->local.command.toMd80.data[1] = 0x00;
+
+   me->local.command.toMd80.length = 2u;
+
+   if (true == md80_Transmit(me, 50))
+   {
+	   ret = true;
+   }
+
+   return ret;
+}
+
 bool md80_SetEncoderZero(tMd80_Device *const me)
 {
    bool ret = false;
@@ -283,6 +307,62 @@ bool md80_SetEncoderZero(tMd80_Device *const me)
    }
 
    return (ret);
+}
+
+bool md80_Restart(tMd80_Device *const me)
+{
+   bool ret = false;
+
+   me->local.command.toMd80.data[0] = MD80_FRAME_RESTART;
+   me->local.command.toMd80.data[1] = 0x00;
+   me->local.command.toMd80.length = 2u;
+
+   if (true == md80_Transmit(me, 100))
+   {
+      ret = true;
+   }
+
+   return (ret);
+}
+
+bool md80_SaveConfig(tMd80_Device *const me)
+{
+   bool ret = false;
+
+   me->local.command.toMd80.data[0] = MD80_FRAME_CAN_SAVE;
+   me->local.command.toMd80.data[1] = 0x00;
+   me->local.command.toMd80.length = 2u;
+
+   if (true == md80_Transmit(me, 50))
+   {
+      ret = true;
+   }
+
+   return (ret);
+}
+
+bool md80_ReadRegister(tMd80_Device * const me, uint16_t addr, uint8_t size)
+{
+	bool ret = false;
+	uint8_t iter = 0;
+
+	me->local.command.toMd80.data[0] = MD80_FRAME_DIAGNOSTIC;
+	me->local.command.toMd80.data[1]= 0x00;
+//	me->local.command.toMd80.data[2]= (addr & 0xFF);
+//	me->local.command.toMd80.data[3]= (addr >> 8u) & 0xff;
+	me->local.command.toMd80.length = 2;
+
+//	for (iter = 0; iter < size; iter ++)
+//	{
+//		me->local.command.toMd80.data[4 + iter] = 0x00;
+//	}
+
+	if (true == md80_Transmit(me, 100))
+	{
+		ret = true;
+	}
+
+	return ret;
 }
 
 void md80_SendMotionCommand(tMd80_Device *const me, float pos, float vel, float torque)
@@ -320,11 +400,8 @@ bool md80_SetCurrentLimit(tMd80_Device *const me, float currentLimit)
 
    if (true == md80_Transmit(me, 50))
    {
-      if (MD80_FRAME_BASE_CONFIG == me->local.response.fromMd80.data[0])
-      {
-         me->config.currentMax = currentLimit;
-         ret = true;
-      }
+      me->config.currentMax = currentLimit;
+      ret = true;
    }
 
    return (ret);
@@ -359,6 +436,9 @@ bool md80_ControlMd80Enable(tMd80_Device *const me, bool enable)
 
    if (true == md80_Transmit(me, 50))
    {
+      me->local.isEnabled = (enable == true) ? true : false;
+      me->config.isMd80Detected = true;
+
       ret = true;
    }
 
@@ -411,7 +491,7 @@ void md80_SetImpedanceControllerParams(tMd80_Device *const me, float kp, float k
    me->config.isRegularsAdjust = true;
 }
 
-void md80_SetMaxTorque(tMd80_Device *const me, float maxTorque)
+void md80_SetMaxTorque(tMd80_Device *const me, uint16_t maxTorque)
 {
    /* Send request */
    me->config.torqueMax = maxTorque;
@@ -439,63 +519,11 @@ void md80_SetTorque(tMd80_Device *const me, float torque)
    me->input.torque = torque;
 }
 
-static uint16_t md80Addr[MD80_NUM_DEV] = {0};
-static uint8_t md80num = 0;
-
-void md80_Scan(void)
-{
-   uint32_t addr = 1u;
-   uint8_t iter = 0u;
-   uint8_t data[2u] = {0u};
-   uint8_t timeout = MD80_TIME_MS_SCAN;
-   uint8_t dataResp[64u] = {0};
-   uint8_t dataSize = 0;
-
-   /* Prepare the frame used to scan. */
-   data[0] = 0x05;
-   data[1] = 0x00;
-
-   /* Clear the array of md80 address. */
-   bzero(md80Addr, sizeof(md80Addr));
-   md80num = 0;
-
-   /* Start scan md80 on bus. */
-   for (addr = 10U; addr <= 2000u; addr++)
-   {
-      if (true == canIdle_SendToAddr(addr, data, sizeof(data)))
-      {
-         while (timeout--)
-         {
-            if (true == canIdle_ReadAddr(&md80Addr[md80num], dataResp, &dataSize))
-            {
-               md80num++;
-               break;
-            }
-
-            osDelay(1);
-         }
-
-         timeout = MD80_TIME_MS_SCAN;
-      }
-   }
-
-   if (md80num > 0)
-   {
-      for (iter = 0u; iter < md80num; iter++)
-      {
-         canIdle_SetAddrTxRxDev(md80_Dev[iter].config.canId, md80Addr[iter], md80Addr[iter]);
-
-         /* Enable motor. */
-         md80_Dev[iter].config.isMd80Detected = true;
-      }
-   }
-}
-
 void md80_ConfigCanBaudrate(tMd80_Device *const me, tMd80_Baudrate canBaudrate)
 {
 }
 
-void md80_PackImpedanceFrame(tMd80_Device *const me)
+static void md80_PackImpedanceFrame(tMd80_Device *const me)
 {
    me->local.command.toMd80.length = 32u;
    me->local.command.toMd80.data[0] = MD80_FRAME_IMP_CONTROL;
@@ -508,7 +536,7 @@ void md80_PackImpedanceFrame(tMd80_Device *const me)
    *(float *)&me->local.command.toMd80.data[22] = me->config.torqueMax;
 }
 
-void md80_PackPositionFrame(tMd80_Device *const me)
+static void md80_PackPositionFrame(tMd80_Device *const me)
 {
    me->local.command.toMd80.length = 32;
    me->local.command.toMd80.data[0] = MD80_FRAME_POS_CONTROL;
@@ -521,7 +549,7 @@ void md80_PackPositionFrame(tMd80_Device *const me)
    *(float *)&me->local.command.toMd80.data[22] = me->input.position;
 }
 
-void md80_PackVelocityFrame(tMd80_Device *const me)
+static void md80_PackVelocityFrame(tMd80_Device *const me)
 {
    me->local.command.toMd80.length = 32;
    me->local.command.toMd80.data[0] = MD80_FRAME_VEL_CONTROL;
@@ -533,14 +561,15 @@ void md80_PackVelocityFrame(tMd80_Device *const me)
    *(float *)&me->local.command.toMd80.data[18] = me->config.torqueMax;
    *(float *)&me->local.command.toMd80.data[22] = me->input.velocity;
 }
-void md80_PackMotionTargetsFrame(tMd80_Device *const me)
+
+static void md80_PackMotionTargetsFrame(tMd80_Device *const me)
 {
    me->local.command.toMd80.length = 24;
    me->local.command.toMd80.data[0] = MD80_FRAME_SET_MOTION_TARGETS;
    me->local.command.toMd80.data[1] = 0x00;
-   memcpy((uint8_t *)&me->local.command.toMd80.data[2], (uint8_t *)&me->input.velocity, sizeof(float));
-   memcpy((uint8_t *)&me->local.command.toMd80.data[6], (uint8_t *)&me->input.position, sizeof(float));
-   memcpy((uint8_t *)&me->local.command.toMd80.data[10], (uint8_t *)&me->input.torque, sizeof(float));
-   memcpy((uint8_t *)&me->local.command.toMd80.data[14], (uint8_t *)&me->config.torqueMax, sizeof(float));
-   memcpy((uint8_t *)&me->local.command.toMd80.data[18], (uint8_t *)&me->config.velocityMax, sizeof(float));
+   *(float *)&me->local.command.toMd80.data[2] = me->input.velocity;
+   *(float *)&me->local.command.toMd80.data[6] = me->input.position;
+   *(float *)&me->local.command.toMd80.data[10] = me->input.torque;
+   *(float *)&me->local.command.toMd80.data[14] = (true == me->config. isTorqueMaxAdjust) ? me->config.torqueMax : 0;
+   *(float *)&me->local.command.toMd80.data[18] = (true == me->config. isTorqueMaxAdjust) ? me->config.velocityMax : 0;
 }

@@ -26,8 +26,6 @@
 #define MD80_DRIVER_MINBANDWIDTH (50U)
 #define MD80_DRIVER_MAXBANDWIDTH (2500U)
 
-#define MD80_NUM_DEV (6U)  /**< The number of MD60 supports by this module. */
-
 /*---------------------------------------------------------------------------------------------------------------------
  *                                             GLOBAL VARIABLES
  *-------------------------------------------------------------------------------------------------------------------*/
@@ -100,8 +98,6 @@ typedef struct
  *                                           VARIABLES DECLARATION
  *-------------------------------------------------------------------------------------------------------------------*/
 
-extern tMd80_Device md80_Dev[MD80_NUM_DEV];
-
 /*---------------------------------------------------------------------------------------------------------------------
  *                                            FUNCTION DECLARATION
  *-------------------------------------------------------------------------------------------------------------------*/
@@ -173,7 +169,7 @@ void md80_SetImpedanceControllerParams (tMd80_Device * const me, float kp, float
  * will be limited to whichever limit has a lower value.
  * @note This is only applied with CUSTOM Impedance/Velocity PID controller settings.
  */
-void md80_SetMaxTorque (tMd80_Device * const me, float maxTorque);
+void md80_SetMaxTorque (tMd80_Device * const me, uint16_t maxTorque);
 
 /**
  * @brief Set the Max Velocity for Position PID and Velocity PID modes.
@@ -182,6 +178,7 @@ void md80_SetMaxTorque (tMd80_Device * const me, float maxTorque);
  * @param maxVelocity
  */
 void md80_SetMaxVelocity (tMd80_Device * const me, float maxVelocity);
+bool md80_ReadRegister(tMd80_Device * const me, uint16_t addr, uint8_t size);
 void md80_SetTargetPosition (tMd80_Device * const me, float pos);
 void md80_SetTargetVelocity (tMd80_Device * const me, float vel);
 void md80_SetTorque (tMd80_Device * const me, float torque);
@@ -198,8 +195,8 @@ bool md80_SetCurrentLimit (tMd80_Device * const me, float currentLimit);
 bool md80_ControlMd80Mode (tMd80_Device * const me, tMd80_Mode mode);
 bool md80_ControlMd80Enable (tMd80_Device * const me, bool enable);
 bool md80_ConfigBlink (tMd80_Device * const me);
-void md80_Scan (void);
-
+bool md80_Restart(tMd80_Device *const me);
+bool md80_setupCalibration (tMd80_Device *const me);
 void md80_MainFunction (tMd80_Device *const me);
 
 #endif /* MD80_H_ */

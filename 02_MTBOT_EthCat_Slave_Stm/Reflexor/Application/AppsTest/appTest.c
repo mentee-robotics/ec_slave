@@ -15,11 +15,11 @@
  *                                                 DEFINES
  *-------------------------------------------------------------------------------------------------------------------*/
 
-#define APPTEST_CANIDLE (0)
+#define APPTEST_CANIDLE (1)
 #define APPTEST_ETHCAT (0)
-#define APPTEST_TMC8462 (1)
+#define APPTEST_TMC8462 (0)
+#define APPTEST_LAN9252 (0)
 #define APPTEST_SOES (0)
-#define APPTEST_ (0)
 
 /*---------------------------------------------------------------------------------------------------------------------
  *                                                VARIABLES
@@ -38,6 +38,10 @@ void AppTest_Init ()
 #if APPTEST_CANIDLE == 1
 
 #endif
+
+#if APPTEST_LAN9252 == 1
+   AppTest_Lan9252_Init();
+#endif
 }
 
 void AppTest_MainFunction ()
@@ -48,6 +52,10 @@ void AppTest_MainFunction ()
 
 #if APPTEST_CANIDLE == 1
    AppTest_CanIdle_MainFunction();
+#endif
+
+#if APPTEST_LAN9252 == 1
+   AppTest_Lan9252_MainFunction();
 #endif
 }
 
@@ -60,6 +68,6 @@ void testTask (void const * arg)
    for (;;)
    {
       AppTest_MainFunction();
-      osDelay(10);
+      osDelay(1);
    }
 }

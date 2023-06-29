@@ -119,6 +119,9 @@ bool SpiDma_write (tSpiDmaModule * const me, uint8_t * data_ptr, uint16_t len)
    /* If the params input are valid, send data to DMA to transfer this to slave.*/
    if (ret)
    {
+      /* Enter Critical section. */
+      taskENTER_CRITICAL();
+
       /* Copy the data to TX buffer. */
       memcpy (me->ptrTxArr, data_ptr, len);
 
@@ -128,6 +131,9 @@ bool SpiDma_write (tSpiDmaModule * const me, uint8_t * data_ptr, uint16_t len)
       /* Change state into TX when the Spi  */
       me->states = SPIDMA_TX;
 
+      /* Exit Critical section. */
+      taskEXIT_CRITICAL();
+      
       /* Blocking the currently executing task until SPI transmit data is finished. */
       bits = xEventGroupWaitBits (spiDma_event, SPIDMA_TX_DONE, pdTRUE, pdFALSE, (me->timeOut/portTICK_PERIOD_MS));
 
@@ -168,6 +174,9 @@ bool SpiDma_read (tSpiDmaModule * const me, uint8_t * data_rx_ptr, uint8_t * dat
    /* If the params input are valid, send data to DMA to transfer dummy to read data from slave.*/
    if (ret)
    {
+      /* Enter Critical section. */
+      taskENTER_CRITICAL();
+
       /* Copy the data to TX buffer. */
       memcpy (me->ptrTxArr, data_tx_dummy, len);
 
@@ -176,6 +185,9 @@ bool SpiDma_read (tSpiDmaModule * const me, uint8_t * data_rx_ptr, uint8_t * dat
 
       /* Change state into TX. */
       me->states = SPIDMA_RX;
+
+      /* Exit Critical section. */
+      taskEXIT_CRITICAL();
 
       /* Blocking the currently executing task until SPI transmit data is finished. */
       bits = xEventGroupWaitBits (spiDma_event, SPIDMA_RX_DONE, pdTRUE, pdFALSE, (me->timeOut/portTICK_PERIOD_MS));

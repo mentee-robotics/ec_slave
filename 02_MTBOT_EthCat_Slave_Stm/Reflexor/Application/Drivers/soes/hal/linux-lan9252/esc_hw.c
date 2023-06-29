@@ -443,7 +443,4 @@ void ESC_init (const esc_cfg_t * config)
    {
       value = lan9252_read_32(ESC_CSR_CMD_REG);
    } while(value & ESC_RESET_CTRL_RST);
-
-
-
 }

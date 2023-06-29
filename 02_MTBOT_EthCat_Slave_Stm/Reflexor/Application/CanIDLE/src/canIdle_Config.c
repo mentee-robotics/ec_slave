@@ -36,13 +36,13 @@ tCanIdle_Devices canIdle_Devices[CAN_DEV_TOTAL] =
       .funIrq = NULL,
       .config = {
          .rx_id = {
-            70,
+            0x6B,
             false, 
             true, 
             false
             },
          .tx_id = {
-            70,
+            0x6B,
             false, 
             true, 
             false

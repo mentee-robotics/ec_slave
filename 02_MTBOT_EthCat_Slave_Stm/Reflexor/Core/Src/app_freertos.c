@@ -50,7 +50,7 @@
 osThreadId appTestTaskHandle;
 osThreadId ethCatSlvTaskHandle;
 osThreadId canIdleHandle;
-osThreadId md80sHandle;
+osThreadId appMd80Handle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -60,7 +60,7 @@ osThreadId md80sHandle;
 void testTask(void const * argument);
 void ethCat_Task(void const * argument);
 void canIdleTask(void const * argument);
-void md80sTask(void const * argument);
+void AppMd80_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -114,16 +114,16 @@ void MX_FREERTOS_Init(void) {
   appTestTaskHandle = osThreadCreate(osThread(appTestTask), NULL);
 
   /* definition and creation of ethCatSlvTask */
-  osThreadDef(ethCatSlvTask, ethCat_Task, osPriorityHigh, 0, 1024);
+  osThreadDef(ethCatSlvTask, ethCat_Task, osPriorityHigh, 0, 512);
   ethCatSlvTaskHandle = osThreadCreate(osThread(ethCatSlvTask), NULL);
 
   /* definition and creation of canIdle */
   osThreadDef(canIdle, canIdleTask, osPriorityHigh, 0, 1024);
   canIdleHandle = osThreadCreate(osThread(canIdle), NULL);
 
-  /* definition and creation of md80s */
-  osThreadDef(md80s, md80sTask, osPriorityNormal, 0, 256);
-  md80sHandle = osThreadCreate(osThread(md80s), NULL);
+  /* definition and creation of appMd80 */
+  osThreadDef(appMd80, AppMd80_Task, osPriorityAboveNormal, 0, 2048);
+  appMd80Handle = osThreadCreate(osThread(appMd80), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -185,22 +185,22 @@ __weak void canIdleTask(void const * argument)
   /* USER CODE END canIdleTask */
 }
 
-/* USER CODE BEGIN Header_md80sTask */
+/* USER CODE BEGIN Header_AppMd80_Task */
 /**
-* @brief Function implementing the md80s thread.
+* @brief Function implementing the appMd80 thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_md80sTask */
-__weak void md80sTask(void const * argument)
+/* USER CODE END Header_AppMd80_Task */
+__weak void AppMd80_Task(void const * argument)
 {
-  /* USER CODE BEGIN md80sTask */
+  /* USER CODE BEGIN AppMd80_Task */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END md80sTask */
+  /* USER CODE END AppMd80_Task */
 }
 
 /* Private application code --------------------------------------------------*/

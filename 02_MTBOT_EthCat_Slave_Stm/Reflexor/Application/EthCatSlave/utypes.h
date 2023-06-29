@@ -13,6 +13,19 @@ typedef struct
 
    /* Inputs */
 
+   uint32_t md80_addrs[6];
+   struct
+   {
+      uint8_t md80_dev_no;
+      uint8_t command;
+      uint8_t size;
+      uint32_t timestamp;
+      uint32_t dataRet0;
+      uint32_t dataRet1;
+      uint32_t dataRet2;
+      uint32_t dataRet3;
+      uint32_t dataRet4;
+   } md80_Respond;
    struct
    {
       uint8_t Mode;
@@ -58,6 +71,18 @@ typedef struct
 
    struct
    {
+      uint8_t md80_dev_no;
+      uint8_t command;
+      uint8_t size;
+      uint32_t timestamp;
+      uint32_t dataSet0;
+      uint32_t dataSet1;
+      uint32_t dataSet2;
+      uint32_t dataSet3;
+      uint32_t dataSet4;
+   } md80_Command;
+   struct
+   {
       uint16_t Position;
       uint16_t Velocity;
       uint16_t Torque;
@@ -89,11 +114,6 @@ typedef struct
       uint8_t enable;
    } md80_3_DataControl;
 
-   /* Parameters */
-
-   uint32_t md80_addrs[8];
-   uint8_t md80_Command[27];
-   uint8_t md80_Respond[27];
 } _Objects;
 
 extern _Objects Obj;

@@ -179,6 +179,12 @@ SECTIONS
     *(.spiDma_module_space)
   } > RAM
 
+  /* Create the data structure for etherCat module. */
+  .etherCat_module_space : ALIGN(4)
+  {
+    *(.etherCat_module_space)
+  } > RAM
+
   /* Remove information from the compiler libraries */
   /DISCARD/ :
   {

@@ -28,7 +28,7 @@
 #define CANIDLE_TX_SIZE (64U)       /*< Size of tx is 4Kb. */
 #define CANIDLE_RX_SIZE (64U)       /*< Size of Rx is 64 bytes. */
 #define CANIDLE_MSG_BUFFER (256U)   /*< Size of msg. */
-#define CANIDLE_TASK_DELAY_MS (1)   /*< Delay 1 msec. */
+#define CANIDLE_TASK_DELAY_MS (1)   /*< Delay 5 msec. */
 
 /*---------------------------------------------------------------------------------------------------------------------
  *                                                VARIABLES
@@ -294,12 +294,12 @@ static tCanIdle_State canIdle_ProcessPost(tCanIdle_Module *const module)
 
 void canIdle_SetAddrTxRxDev (tCanIdle_DeviceId id, uint16_t addrTx, uint16_t addrRx)
 {
-   uint8_t idx = canIdle_getDeviceId (id);
+   uint8_t idx = id;
 
    if (CAN_DEV_ID_INVALID != idx)
    {
-      canIdle_Devices[idx].config.tx_id.id = addrTx;
-      canIdle_Devices[idx].config.rx_id.id = addrRx;
+      canIdle_Devices[idx].local.init_info.tx_id.id = addrTx;
+      canIdle_Devices[idx].local.init_info.rx_id.id = addrRx;
    }
 }
 
@@ -388,11 +388,10 @@ bool canIdle_ReadAddr (uint32_t * const id, const uint8_t *payload, uint8_t *siz
 
       memcpy((uint8_t *)payload, (uint8_t *)canIdle_Module.local.canResp.data, lenDataRet);
 
-      *size = lenDataRet;
-
       canIdle_Module.local.isRecMsg = false;
 
       *id = canIdle_Module.local.canResp.id.id;
+      *size = lenDataRet;
 
       ret = true;
    }
@@ -533,7 +532,7 @@ void canIdleTask(void const *argument)
       /* Run main function of canIdle. */
       canIdle_MainFunction(&canIdle_Module);
       /* Delay 1 msec.*/
-      osDelay(1);
+      osDelay(CANIDLE_TASK_DELAY_MS);
    }
    /* USER CODE END canIdleTask */
 }
