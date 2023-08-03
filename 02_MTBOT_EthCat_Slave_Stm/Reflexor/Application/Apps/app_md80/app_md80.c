@@ -193,6 +193,8 @@ static void App_Md80_AddMd80 (tAppMd80_Data * const app)
 {
    uint16_t canAddr = 0u;
    uint8_t iter = 0u;
+   uint16_t canTxAddr = 0u;
+   uint16_t canRxAddr = 0u;
 
    if (app->cmd.size > 2u)
    {
@@ -216,6 +218,13 @@ static void App_Md80_AddMd80 (tAppMd80_Data * const app)
             app->pMd80[iter]->config.isMd80Detected = true;
 
             break;
+         }
+         else
+         {
+        	 // This is solution workarround, todo: fix it.
+        	 canIdle_GetAddrTxRxDev(iter, &canTxAddr, &canRxAddr);
+        	 if ((canAddr == canTxAddr) && (canAddr == canRxAddr))
+        		 break;
          }
       }
    }
@@ -246,6 +255,8 @@ static void App_Md80_UpdateDataControl(void)
       Obj.md80_0_DataReturn.Temperature = MD80_REAL_TO_ETH(pAppMd80->pMd80[0]->output.temperature);
       Obj.md80_0_DataReturn.Torque = MD80_REAL_TO_ETH(pAppMd80->pMd80[0]->output.torque);
       Obj.md80_0_DataReturn.Velocity = MD80_REAL_TO_ETH(pAppMd80->pMd80[0]->output.velocity);
+      Obj.md80_0_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount()/portTICK_PERIOD_MS);
+      Obj.md80_0_DataReturn.counter++;
    }
    else
    {
@@ -270,6 +281,8 @@ static void App_Md80_UpdateDataControl(void)
       Obj.md80_1_DataReturn.Temperature = MD80_REAL_TO_ETH(pAppMd80->pMd80[1]->output.temperature);
       Obj.md80_1_DataReturn.Torque = MD80_REAL_TO_ETH(pAppMd80->pMd80[1]->output.torque);
       Obj.md80_1_DataReturn.Velocity = MD80_REAL_TO_ETH(pAppMd80->pMd80[1]->output.velocity);
+      Obj.md80_1_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount()/portTICK_PERIOD_MS);
+      Obj.md80_1_DataReturn.counter++;
    }
    else
    {
@@ -294,6 +307,8 @@ static void App_Md80_UpdateDataControl(void)
       Obj.md80_2_DataReturn.Temperature = MD80_REAL_TO_ETH(pAppMd80->pMd80[2]->output.temperature);
       Obj.md80_2_DataReturn.Torque = MD80_REAL_TO_ETH(pAppMd80->pMd80[2]->output.torque);
       Obj.md80_2_DataReturn.Velocity = MD80_REAL_TO_ETH(pAppMd80->pMd80[2]->output.velocity);
+      Obj.md80_2_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount()/portTICK_PERIOD_MS);
+      Obj.md80_2_DataReturn.counter++;
    }
    else
    {
@@ -318,6 +333,8 @@ static void App_Md80_UpdateDataControl(void)
       Obj.md80_3_DataReturn.Temperature = MD80_REAL_TO_ETH(pAppMd80->pMd80[3]->output.temperature);
       Obj.md80_3_DataReturn.Torque = MD80_REAL_TO_ETH(pAppMd80->pMd80[3]->output.torque);
       Obj.md80_3_DataReturn.Velocity = MD80_REAL_TO_ETH(pAppMd80->pMd80[3]->output.velocity);
+      Obj.md80_3_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount()/portTICK_PERIOD_MS);
+      Obj.md80_3_DataReturn.counter++;
    }
    else
    {
@@ -601,9 +618,6 @@ void AppMd80_Task (void const *argument)
 
       /* Update data control. */
       App_Md80_UpdateDataControl();
-
-      /* Delay task. */
-      osDelay(APP_MD80_TASK_DELAY);
    }
    /* USER CODE END md80sTask */
 }

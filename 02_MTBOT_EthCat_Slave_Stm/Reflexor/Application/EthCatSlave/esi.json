@@ -175,10 +175,24 @@
           },
           {
             "name": "enabled",
-            "dtype": "BOOLEAN",
+            "dtype": "UNSIGNED8",
             "value": "0",
             "access": "RO",
             "data": "&Obj.md80_0_DataReturn.enabled"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "data": "&Obj.md80_0_DataReturn.counter",
+            "value": "0",
+            "access": "RO"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_0_DataReturn.timestamp"
           }
         ],
         "pdo_mappings": [
@@ -237,10 +251,24 @@
           },
           {
             "name": "enabled",
-            "dtype": "BOOLEAN",
+            "dtype": "UNSIGNED8",
             "value": "0",
             "access": "RO",
             "data": "&Obj.md80_1_DataReturn.enabled"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.counter"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.timestamp"
           }
         ],
         "pdo_mappings": [
@@ -299,10 +327,24 @@
           },
           {
             "name": "enabled",
-            "dtype": "BOOLEAN",
+            "dtype": "UNSIGNED8",
             "value": "0",
             "access": "RO",
             "data": "&Obj.md80_2_DataReturn.enabled"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_2_DataReturn.counter"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_2_DataReturn.timestamp"
           }
         ],
         "pdo_mappings": [
@@ -361,10 +403,58 @@
           },
           {
             "name": "enabled",
-            "dtype": "BOOLEAN",
+            "dtype": "UNSIGNED8",
             "value": "0",
             "access": "RO",
             "data": "&Obj.md80_3_DataReturn.enabled"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.counter"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.timestamp"
+          }
+        ],
+        "pdo_mappings": [
+          "txpdo"
+        ]
+      },
+      "6006": {
+        "otype": "RECORD",
+        "name": "md80_Last_Command_Received",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "command",
+            "dtype": "UNSIGNED32",
+            "data": "&Obj.md80_Last_Command_Received.command",
+            "value": "0",
+            "access": "RO"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_Last_Command_Received.counter"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_Last_Command_Received.timestamp"
           }
         ],
         "pdo_mappings": [
@@ -403,11 +493,11 @@
             "data": "&Obj.md80_Command.size"
           },
           {
-            "name": "timestamp",
+            "name": "counter",
             "dtype": "UNSIGNED32",
             "value": "0",
             "access": "WO",
-            "data": "&Obj.md80_Command.timestamp"
+            "data": "&Obj.md80_Command.counter"
           },
           {
             "name": "dataSet0",
@@ -487,10 +577,17 @@
           },
           {
             "name": "enable",
-            "dtype": "BOOLEAN",
+            "dtype": "UNSIGNED8",
             "value": "0",
             "access": "WO",
             "data": "&Obj.md80_0_DataControl.enable"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_0_DataControl.counter"
           }
         ],
         "pdo_mappings": [
@@ -535,10 +632,17 @@
           },
           {
             "name": "enable",
-            "dtype": "BOOLEAN",
+            "dtype": "UNSIGNED8",
             "value": "0",
             "access": "WO",
             "data": "&Obj.md80_1_DataControl.enable"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_1_DataControl.counter"
           }
         ],
         "pdo_mappings": [
@@ -583,10 +687,17 @@
           },
           {
             "name": "enable",
-            "dtype": "BOOLEAN",
+            "dtype": "UNSIGNED8",
             "value": "0",
             "access": "WO",
             "data": "&Obj.md80_2_DataControl.enable"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_2_DataControl.counter"
           }
         ],
         "pdo_mappings": [
@@ -631,10 +742,17 @@
           },
           {
             "name": "enable",
-            "dtype": "BOOLEAN",
+            "dtype": "UNSIGNED8",
             "value": "0",
             "access": "WO",
             "data": "&Obj.md80_3_DataControl.enable"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_3_DataControl.counter"
           }
         ],
         "pdo_mappings": [

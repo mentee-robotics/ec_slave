@@ -12,11 +12,9 @@
 #include "ecat_slv.h"
 #include "utypes.h"
 #include "gpio.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "cmsis_os.h"
 #include "canIdle.h"
 #include "app_md80.h"
+#include "uartDma/uartDma.h"
 
 /*---------------------------------------------------------------------------------------------------------------------
  *                                                 DEFINES
@@ -27,6 +25,8 @@
 
 #define ETHCAT_TASK_DELAY_MS (1U)   /*< Delay of this task is 1msec. */
 #define ETHCAT_MD80_COMMAND (0x2002)
+
+#define ETHCAT_DUMMYDATA_500US (1)
 
 /*---------------------------------------------------------------------------------------------------------------------
  *                                                VARIABLES
@@ -60,6 +60,23 @@ void cb_get_inputs (void)
       {
     	  printf ("Stop here");
       }
+
+      /* Received new command. */
+      Obj.md80_Last_Command_Received.command = cmd;
+      Obj.md80_Last_Command_Received.counter = Obj.md80_Command.counter;
+      Obj.md80_Last_Command_Received.timestamp = (uint32_t)(xTaskGetTickCount()/portTICK_PERIOD_MS);
+
+      /* Print log via serial. */
+      printf ("New Command: %d\n", cmd);
+      printf ("Md80 id: %d\n", md80id);
+      printf ("counter: %d", (int)Obj.md80_Command.counter);
+      printf (" at Time: %d\n", (int)Obj.md80_Last_Command_Received.timestamp);
+      printf ("DataCmd received: \n");
+      for (int i = 0; i < sizeof(dataCmd); i++)
+      {
+    	  printf("%02X", dataCmd[i]);
+      }
+      printf ("\n");
 
       /* Clear the Command. */
       memset((void *)&Obj.md80_Command, 0x00, sizeof(Obj.md80_Command));
@@ -129,6 +146,15 @@ void ethCat_Init (void)
    ecat_slv_init (&ethCat_cfg);
 }
 
+void timerCounterCb(void const * argument)
+{
+#ifdef ETHCAT_DUMMYDATA_500US == 1
+   /* Update the counter dummy for md80: 1ms */
+   Obj.md80_0_DataReturn.counter++;
+   Obj.md80_0_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount()/portTICK_PERIOD_MS);
+#endif
+}
+
 void ethCat_Task (void const * argument)
 {
    /* Initialize the modules which used by this application. */
@@ -137,10 +163,7 @@ void ethCat_Task (void const * argument)
    /* Sit in main loop of this task. */
    for (;;)
    {
-      /* Run main function of etherCat. */
+	  /* Run main function of etherCat. */
       ecat_slv();
-
-      /* Delay tasks. */
-      osDelay(ETHCAT_TASK_DELAY_MS);
    }
 }

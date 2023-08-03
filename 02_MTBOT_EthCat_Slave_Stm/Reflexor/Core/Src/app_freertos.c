@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "uartDma/uartDma.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,6 +51,7 @@ osThreadId appTestTaskHandle;
 osThreadId ethCatSlvTaskHandle;
 osThreadId canIdleHandle;
 osThreadId appMd80Handle;
+osTimerId timerCounter500usHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -61,11 +62,13 @@ void testTask(void const * argument);
 void ethCat_Task(void const * argument);
 void canIdleTask(void const * argument);
 void AppMd80_Task(void const * argument);
+void timerCounterCb(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* Hook prototypes */
 void vApplicationIdleHook(void);
+void vApplicationDaemonTaskStartupHook(void);
 
 /* USER CODE BEGIN 2 */
 __weak void vApplicationIdleHook( void )
@@ -81,6 +84,14 @@ __weak void vApplicationIdleHook( void )
    memory allocated by the kernel to any task that has since been deleted. */
 }
 /* USER CODE END 2 */
+
+/* USER CODE BEGIN DAEMON_TASK_STARTUP_HOOK */
+void vApplicationDaemonTaskStartupHook(void)
+{
+  /* Initialize the uartDma module. */
+  uartDma_init();
+}
+/* USER CODE END DAEMON_TASK_STARTUP_HOOK */
 
 /**
   * @brief  FreeRTOS initialization
@@ -100,7 +111,14 @@ void MX_FREERTOS_Init(void) {
   /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
 
+  /* Create the timer(s) */
+  /* definition and creation of timerCounter500us */
+  osTimerDef(timerCounter500us, timerCounterCb);
+  timerCounter500usHandle = osTimerCreate(osTimer(timerCounter500us), osTimerPeriodic, NULL);
+
   /* USER CODE BEGIN RTOS_TIMERS */
+  xTimerChangePeriod(timerCounter500usHandle, 1, 100);
+
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
@@ -110,7 +128,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of appTestTask */
-  osThreadDef(appTestTask, testTask, osPriorityNormal, 0, 128);
+  osThreadDef(appTestTask, testTask, osPriorityLow, 0, 128);
   appTestTaskHandle = osThreadCreate(osThread(appTestTask), NULL);
 
   /* definition and creation of ethCatSlvTask */
@@ -118,17 +136,16 @@ void MX_FREERTOS_Init(void) {
   ethCatSlvTaskHandle = osThreadCreate(osThread(ethCatSlvTask), NULL);
 
   /* definition and creation of canIdle */
-  osThreadDef(canIdle, canIdleTask, osPriorityHigh, 0, 1024);
+  osThreadDef(canIdle, canIdleTask, osPriorityAboveNormal, 0, 512);
   canIdleHandle = osThreadCreate(osThread(canIdle), NULL);
 
   /* definition and creation of appMd80 */
-  osThreadDef(appMd80, AppMd80_Task, osPriorityAboveNormal, 0, 2048);
+  osThreadDef(appMd80, AppMd80_Task, osPriorityAboveNormal, 0, 1424);
   appMd80Handle = osThreadCreate(osThread(appMd80), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
-
 }
 
 /* USER CODE BEGIN Header_testTask */
@@ -201,6 +218,14 @@ __weak void AppMd80_Task(void const * argument)
     osDelay(1);
   }
   /* USER CODE END AppMd80_Task */
+}
+
+/* timerCounterCb function */
+__weak void timerCounterCb(void const * argument)
+{
+  /* USER CODE BEGIN timerCounterCb */
+
+  /* USER CODE END timerCounterCb */
 }
 
 /* Private application code --------------------------------------------------*/

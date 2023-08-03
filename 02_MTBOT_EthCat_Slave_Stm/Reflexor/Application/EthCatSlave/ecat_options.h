@@ -34,9 +34,9 @@
 #define SM3_act          1
 
 #define MAX_MAPPINGS_SM2 33
-#define MAX_MAPPINGS_SM3 47
+#define MAX_MAPPINGS_SM3 54
 
-#define MAX_RXPDO_SIZE   512
-#define MAX_TXPDO_SIZE   512
+#define MAX_RXPDO_SIZE   600
+#define MAX_TXPDO_SIZE   600
 
 #endif /* __ECAT_OPTIONS_H__ */

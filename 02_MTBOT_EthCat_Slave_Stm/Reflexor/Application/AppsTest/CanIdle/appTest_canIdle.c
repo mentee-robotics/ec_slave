@@ -55,7 +55,7 @@ void AppTest_CanIdle_MainFunction ()
    case APPTEST_CANIDLE_EXAMPLE8:
       if (false == isCanIdle1Enabled)
       {
-    	 canIdle_SetAddrTxRxDev(MD80_CAN_0, 170, 170);
+    	 canIdle_SetAddrTxRxDev(MD80_CAN_0, 70, 70);
     	 //md80_Restart(&md80_dev1);
 
 
@@ -75,7 +75,7 @@ void AppTest_CanIdle_MainFunction ()
          osDelay(1000);
 
          md80_SetMaxTorque (&md80_dev1, 10.0);
-//         md80_SetMaxVelocity (&md80_dev1, 5.0);
+         md80_SetMaxVelocity (&md80_dev1, 5.0);
          osDelay(1000);
 
          /* Set mode to position PID */

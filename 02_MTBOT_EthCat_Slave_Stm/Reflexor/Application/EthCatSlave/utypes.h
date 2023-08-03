@@ -35,6 +35,8 @@ typedef struct
       uint8_t Temperature;
       uint8_t Error;
       uint8_t enabled;
+      uint32_t counter;
+      uint32_t timestamp;
    } md80_0_DataReturn;
    struct
    {
@@ -45,6 +47,8 @@ typedef struct
       uint8_t Temperature;
       uint8_t Error;
       uint8_t enabled;
+      uint32_t counter;
+      uint32_t timestamp;
    } md80_1_DataReturn;
    struct
    {
@@ -55,6 +59,8 @@ typedef struct
       uint8_t Temperature;
       uint8_t Error;
       uint8_t enabled;
+      uint32_t counter;
+      uint32_t timestamp;
    } md80_2_DataReturn;
    struct
    {
@@ -65,7 +71,15 @@ typedef struct
       uint8_t Temperature;
       uint8_t Error;
       uint8_t enabled;
+      uint32_t counter;
+      uint32_t timestamp;
    } md80_3_DataReturn;
+   struct
+   {
+      uint32_t command;
+      uint32_t counter;
+      uint32_t timestamp;
+   } md80_Last_Command_Received;
 
    /* Outputs */
 
@@ -74,7 +88,7 @@ typedef struct
       uint8_t md80_dev_no;
       uint8_t command;
       uint8_t size;
-      uint32_t timestamp;
+      uint32_t counter;
       uint32_t dataSet0;
       uint32_t dataSet1;
       uint32_t dataSet2;
@@ -88,6 +102,7 @@ typedef struct
       uint16_t Torque;
       uint8_t Mode;
       uint8_t enable;
+      uint32_t counter;
    } md80_0_DataControl;
    struct
    {
@@ -96,6 +111,7 @@ typedef struct
       uint16_t Torque;
       uint8_t Mode;
       uint8_t enable;
+      uint32_t counter;
    } md80_1_DataControl;
    struct
    {
@@ -104,6 +120,7 @@ typedef struct
       uint16_t Torque;
       uint8_t Mode;
       uint8_t enable;
+      uint32_t counter;
    } md80_2_DataControl;
    struct
    {
@@ -112,6 +129,7 @@ typedef struct
       uint16_t Torque;
       uint8_t Mode;
       uint8_t enable;
+      uint32_t counter;
    } md80_3_DataControl;
 
 } _Objects;

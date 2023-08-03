@@ -4,47 +4,457 @@
     "sdo": {},
     "txpdo": {
       "6000": {
-        "otype": "RECORD",
-        "name": "DataTxs",
+        "otype": "ARRAY",
+        "name": "md80_addrs",
         "access": "RO",
         "items": [
           {
             "name": "Max SubIndex"
           },
           {
-            "name": "NoItems",
+            "name": "md80_0",
+            "value": "0",
+            "data": "&Obj.md80_addrs[0]"
+          },
+          {
+            "name": "md80_1",
+            "value": "0",
+            "data": "&Obj.md80_addrs[1]"
+          },
+          {
+            "name": "md80_2",
+            "value": "0",
+            "data": "&Obj.md80_addrs[2]"
+          },
+          {
+            "name": "md80_3",
+            "value": "0",
+            "data": "&Obj.md80_addrs[3]"
+          },
+          {
+            "name": "md80_4",
+            "value": "0",
+            "data": "&Obj.md80_addrs[4]"
+          },
+          {
+            "name": "md80_5",
+            "value": "0",
+            "data": "&Obj.md80_addrs[5]"
+          }
+        ],
+        "pdo_mappings": [
+          "txpdo"
+        ],
+        "dtype": "UNSIGNED32"
+      },
+      "6001": {
+        "otype": "RECORD",
+        "name": "md80_Respond",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "md80_dev_no",
             "dtype": "UNSIGNED8",
-            "data": "&Obj.DataTxs.NoItems",
-            "value": "4",
+            "data": "&Obj.md80_Respond.md80_dev_no",
+            "value": "0",
             "access": "RO"
           },
           {
-            "name": "DataTx0",
+            "name": "command",
             "dtype": "UNSIGNED8",
             "value": "0",
-            "access": "RW",
-            "data": "&Obj.DataTxs.DataTx0"
+            "access": "RO",
+            "data": "&Obj.md80_Respond.command"
           },
           {
-            "name": "DataTx1",
+            "name": "size",
             "dtype": "UNSIGNED8",
             "value": "0",
-            "access": "RW",
-            "data": "&Obj.DataTxs.DataTx1"
+            "access": "RO",
+            "data": "&Obj.md80_Respond.size"
           },
           {
-            "name": "DataTx2",
-            "dtype": "UNSIGNED8",
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
             "value": "0",
-            "access": "RW",
-            "data": "&Obj.DataTxs.DataTx2"
+            "access": "RO",
+            "data": "&Obj.md80_Respond.timestamp"
           },
           {
-            "name": "DataTx3",
+            "name": "dataRet0",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_Respond.dataRet0"
+          },
+          {
+            "name": "dataRet1",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_Respond.dataRet1"
+          },
+          {
+            "name": "dataRet2",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_Respond.dataRet2"
+          },
+          {
+            "name": "dataRet3",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_Respond.dataRet3"
+          },
+          {
+            "name": "dataRet4",
+            "dtype": "UNSIGNED32",
+            "data": "&Obj.md80_Respond.dataRet4",
+            "value": "0",
+            "access": "RO"
+          }
+        ],
+        "pdo_mappings": [
+          "txpdo"
+        ]
+      },
+      "6002": {
+        "otype": "RECORD",
+        "name": "md80_0_DataReturn",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "Mode",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_0_DataReturn.Mode"
+          },
+          {
+            "name": "Position",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_0_DataReturn.Position"
+          },
+          {
+            "name": "Velocity",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_0_DataReturn.Velocity"
+          },
+          {
+            "name": "Torque",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_0_DataReturn.Torque"
+          },
+          {
+            "name": "Temperature",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_0_DataReturn.Temperature"
+          },
+          {
+            "name": "Error",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_0_DataReturn.Error"
+          },
+          {
+            "name": "enabled",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_0_DataReturn.enabled"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "data": "&Obj.md80_0_DataReturn.counter",
+            "value": "0",
+            "access": "RO"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_0_DataReturn.timestamp"
+          }
+        ],
+        "pdo_mappings": [
+          "txpdo"
+        ]
+      },
+      "6003": {
+        "otype": "RECORD",
+        "name": "md80_1_DataReturn",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "Mode",
+            "dtype": "UNSIGNED8",
+            "data": "&Obj.md80_1_DataReturn.Mode",
+            "value": "0",
+            "access": "RO"
+          },
+          {
+            "name": "Position",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.Position"
+          },
+          {
+            "name": "Velocity",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.Velocity"
+          },
+          {
+            "name": "Torque",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.Torque"
+          },
+          {
+            "name": "Temperature",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.Temperature"
+          },
+          {
+            "name": "Error",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.Error"
+          },
+          {
+            "name": "enabled",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.enabled"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.counter"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_1_DataReturn.timestamp"
+          }
+        ],
+        "pdo_mappings": [
+          "txpdo"
+        ]
+      },
+      "6004": {
+        "otype": "RECORD",
+        "name": "md80_2_DataReturn",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "Mode",
+            "dtype": "UNSIGNED8",
+            "data": "&Obj.md80_2_DataReturn.Mode",
+            "value": "0",
+            "access": "RO"
+          },
+          {
+            "name": "Position",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_2_DataReturn.Position"
+          },
+          {
+            "name": "Velocity",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_2_DataReturn.Velocity"
+          },
+          {
+            "name": "Torque",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_2_DataReturn.Torque"
+          },
+          {
+            "name": "Temperature",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_2_DataReturn.Temperature"
+          },
+          {
+            "name": "Error",
             "dtype": "UNSIGNED8",
             "value": "0",
             "access": "RW",
-            "data": "&Obj.DataTxs.DataTx3"
+            "data": "&Obj.md80_2_DataReturn.Error"
+          },
+          {
+            "name": "enabled",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_2_DataReturn.enabled"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_2_DataReturn.counter"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_2_DataReturn.timestamp"
+          }
+        ],
+        "pdo_mappings": [
+          "txpdo"
+        ]
+      },
+      "6005": {
+        "otype": "RECORD",
+        "name": "md80_3_DataReturn",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "Mode",
+            "dtype": "UNSIGNED8",
+            "data": "&Obj.md80_3_DataReturn.Mode",
+            "value": "0",
+            "access": "RO"
+          },
+          {
+            "name": "Position",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.Position"
+          },
+          {
+            "name": "Velocity",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.Velocity"
+          },
+          {
+            "name": "Torque",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.Torque"
+          },
+          {
+            "name": "Temperature",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.Temperature"
+          },
+          {
+            "name": "Error",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.Error"
+          },
+          {
+            "name": "enabled",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.enabled"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.counter"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_3_DataReturn.timestamp"
+          }
+        ],
+        "pdo_mappings": [
+          "txpdo"
+        ]
+      },
+      "6006": {
+        "otype": "RECORD",
+        "name": "md80_Last_Command_Received",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "command",
+            "dtype": "UNSIGNED32",
+            "data": "&Obj.md80_Last_Command_Received.command",
+            "value": "0",
+            "access": "RO"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_Last_Command_Received.counter"
+          },
+          {
+            "name": "timestamp",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "RO",
+            "data": "&Obj.md80_Last_Command_Received.timestamp"
           }
         ],
         "pdo_mappings": [
@@ -53,48 +463,296 @@
       }
     },
     "rxpdo": {
-      "7004": {
+      "7000": {
         "otype": "RECORD",
-        "name": "DataRxs",
+        "name": "md80_Command",
         "access": "RO",
         "items": [
           {
             "name": "Max SubIndex"
           },
           {
-            "name": "NoItems",
-            "dtype": "UNSIGNED8",
-            "data": "&Obj.DataRxs.NoItems",
-            "value": "4",
-            "access": "RO"
-          },
-          {
-            "name": "DataRx0",
+            "name": "md80_dev_no",
             "dtype": "UNSIGNED8",
             "value": "0",
-            "access": "RW",
-            "data": "&Obj.DataRxs.DataRx0"
+            "access": "WO",
+            "data": "&Obj.md80_Command.md80_dev_no"
           },
           {
-            "name": "DataRx1",
+            "name": "command",
             "dtype": "UNSIGNED8",
             "value": "0",
-            "access": "RW",
-            "data": "&Obj.DataRxs.DataRx1"
+            "access": "WO",
+            "data": "&Obj.md80_Command.command"
           },
           {
-            "name": "DataRx2",
+            "name": "size",
             "dtype": "UNSIGNED8",
             "value": "0",
-            "access": "RW",
-            "data": "&Obj.DataRxs.DataRx2"
+            "access": "WO",
+            "data": "&Obj.md80_Command.size"
           },
           {
-            "name": "DataRx3",
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_Command.counter"
+          },
+          {
+            "name": "dataSet0",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_Command.dataSet0"
+          },
+          {
+            "name": "dataSet1",
+            "dtype": "UNSIGNED32",
+            "data": "&Obj.md80_Command.dataSet1",
+            "value": "0",
+            "access": "WO"
+          },
+          {
+            "name": "dataSet2",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_Command.dataSet2"
+          },
+          {
+            "name": "dataSet3",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_Command.dataSet3"
+          },
+          {
+            "name": "dataSet4",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_Command.dataSet4"
+          }
+        ],
+        "pdo_mappings": [
+          "rxpdo"
+        ]
+      },
+      "7001": {
+        "otype": "RECORD",
+        "name": "md80_0_DataControl",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "Position",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_0_DataControl.Position"
+          },
+          {
+            "name": "Velocity",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_0_DataControl.Velocity"
+          },
+          {
+            "name": "Torque",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_0_DataControl.Torque"
+          },
+          {
+            "name": "Mode",
             "dtype": "UNSIGNED8",
             "value": "0",
-            "access": "RW",
-            "data": "&Obj.DataRxs.DataRx3"
+            "access": "WO",
+            "data": "&Obj.md80_0_DataControl.Mode"
+          },
+          {
+            "name": "enable",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_0_DataControl.enable"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_0_DataControl.counter"
+          }
+        ],
+        "pdo_mappings": [
+          "rxpdo"
+        ]
+      },
+      "7002": {
+        "otype": "RECORD",
+        "name": "md80_1_DataControl",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "Position",
+            "dtype": "UNSIGNED16",
+            "data": "&Obj.md80_1_DataControl.Position",
+            "value": "0",
+            "access": "WO"
+          },
+          {
+            "name": "Velocity",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_1_DataControl.Velocity"
+          },
+          {
+            "name": "Torque",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_1_DataControl.Torque"
+          },
+          {
+            "name": "Mode",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_1_DataControl.Mode"
+          },
+          {
+            "name": "enable",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_1_DataControl.enable"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_1_DataControl.counter"
+          }
+        ],
+        "pdo_mappings": [
+          "rxpdo"
+        ]
+      },
+      "7003": {
+        "otype": "RECORD",
+        "name": "md80_2_DataControl",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "Position",
+            "dtype": "UNSIGNED16",
+            "data": "&Obj.md80_2_DataControl.Position",
+            "value": "0",
+            "access": "WO"
+          },
+          {
+            "name": "Velocity",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_2_DataControl.Velocity"
+          },
+          {
+            "name": "Torque",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_2_DataControl.Torque"
+          },
+          {
+            "name": "Mode",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_2_DataControl.Mode"
+          },
+          {
+            "name": "enable",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_2_DataControl.enable"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_2_DataControl.counter"
+          }
+        ],
+        "pdo_mappings": [
+          "rxpdo"
+        ]
+      },
+      "7004": {
+        "otype": "RECORD",
+        "name": "md80_3_DataControl",
+        "access": "RO",
+        "items": [
+          {
+            "name": "Max SubIndex"
+          },
+          {
+            "name": "Position",
+            "dtype": "UNSIGNED16",
+            "data": "&Obj.md80_3_DataControl.Position",
+            "value": "0",
+            "access": "WO"
+          },
+          {
+            "name": "Velocity",
+            "dtype": "UNSIGNED16",
+            "data": "&Obj.md80_3_DataControl.Velocity",
+            "value": "0",
+            "access": "WO"
+          },
+          {
+            "name": "Torque",
+            "dtype": "UNSIGNED16",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_3_DataControl.Torque"
+          },
+          {
+            "name": "Mode",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_3_DataControl.Mode"
+          },
+          {
+            "name": "enable",
+            "dtype": "UNSIGNED8",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_3_DataControl.enable"
+          },
+          {
+            "name": "counter",
+            "dtype": "UNSIGNED32",
+            "value": "0",
+            "access": "WO",
+            "data": "&Obj.md80_3_DataControl.counter"
           }
         ],
         "pdo_mappings": [

@@ -47,6 +47,7 @@ bool canIdle_SendToAddr (uint32_t addrTx, const uint8_t * payload, uint8_t size)
 bool canIdle_Read (tCanIdle_DeviceId * const id, const uint8_t *payload, uint8_t *size);
 bool canIdle_SetFunctionCallbackIsr ( tCanIdle_DeviceId id,
                                       callbackFunction func);
+void canIdle_GetAddrTxRxDev(tCanIdle_DeviceId id, uint16_t * addrTx, uint16_t * addrRx);
 void canIdle_Init (tCanIdle_Module * const module);
 void canIdle_MainFunction(tCanIdle_Module * const module);
 

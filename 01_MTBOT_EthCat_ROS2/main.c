@@ -53,6 +53,7 @@ typedef enum
    DEPRECATED = 3,
    IMPEDANCE = 4
 } tMotorMode;
+
 typedef enum
 {
    BUS_FRAME_NONE = 0,

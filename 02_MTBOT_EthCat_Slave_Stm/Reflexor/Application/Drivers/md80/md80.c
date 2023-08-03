@@ -437,7 +437,6 @@ bool md80_ControlMd80Enable(tMd80_Device *const me, bool enable)
    if (true == md80_Transmit(me, 50))
    {
       me->local.isEnabled = (enable == true) ? true : false;
-      me->config.isMd80Detected = true;
 
       ret = true;
    }
