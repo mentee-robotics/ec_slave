@@ -25,7 +25,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "uartDma/uartDma.h"
+#include "uartDma.h"
+#include "lan9252.h"
+#include "ethCat.h"
+#include "canM.h"
+#include "canIdle.h"
+#include "appTest.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,10 +52,10 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-osThreadId appTestTaskHandle;
-osThreadId ethCatSlvTaskHandle;
+osThreadId appTestHandle;
+osThreadId ethCatHandle;
+osThreadId canMHandle;
 osThreadId canIdleHandle;
-osThreadId appMd80Handle;
 osTimerId timerCounter500usHandle;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,17 +63,32 @@ osTimerId timerCounter500usHandle;
 
 /* USER CODE END FunctionPrototypes */
 
-void testTask(void const * argument);
-void ethCat_Task(void const * argument);
+void appTestTask(void const * argument);
+void ethCatTask(void const * argument);
+void canMTask(void const * argument);
 void canIdleTask(void const * argument);
-void AppMd80_Task(void const * argument);
 void timerCounterCb(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* Hook prototypes */
+void configureTimerForRunTimeStats(void);
+unsigned long getRunTimeCounterValue(void);
 void vApplicationIdleHook(void);
 void vApplicationDaemonTaskStartupHook(void);
+
+/* USER CODE BEGIN 1 */
+/* Functions needed when configGENERATE_RUN_TIME_STATS is on */
+__weak void configureTimerForRunTimeStats(void)
+{
+
+}
+
+__weak unsigned long getRunTimeCounterValue(void)
+{
+return 0;
+}
+/* USER CODE END 1 */
 
 /* USER CODE BEGIN 2 */
 __weak void vApplicationIdleHook( void )
@@ -88,8 +108,11 @@ __weak void vApplicationIdleHook( void )
 /* USER CODE BEGIN DAEMON_TASK_STARTUP_HOOK */
 void vApplicationDaemonTaskStartupHook(void)
 {
-  /* Initialize the uartDma module. */
+  /* Initialize the uartDma driver. */
   uartDma_init();
+
+  /* Initialize the lan9252 driver. */
+  lan9252_Init();
 }
 /* USER CODE END DAEMON_TASK_STARTUP_HOOK */
 
@@ -117,7 +140,9 @@ void MX_FREERTOS_Init(void) {
   timerCounter500usHandle = osTimerCreate(osTimer(timerCounter500us), osTimerPeriodic, NULL);
 
   /* USER CODE BEGIN RTOS_TIMERS */
+  xTimerStop(timerCounter500usHandle, pdMS_TO_TICKS(1));
   xTimerChangePeriod(timerCounter500usHandle, 1, 100);
+  xTimerStart(timerCounter500usHandle, pdMS_TO_TICKS(1));
 
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
@@ -127,61 +152,95 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of appTestTask */
-  osThreadDef(appTestTask, testTask, osPriorityLow, 0, 128);
-  appTestTaskHandle = osThreadCreate(osThread(appTestTask), NULL);
+  /* definition and creation of appTest */
+  osThreadDef(appTest, appTestTask, osPriorityLow, 0, 128);
+  appTestHandle = osThreadCreate(osThread(appTest), NULL);
 
-  /* definition and creation of ethCatSlvTask */
-  osThreadDef(ethCatSlvTask, ethCat_Task, osPriorityHigh, 0, 512);
-  ethCatSlvTaskHandle = osThreadCreate(osThread(ethCatSlvTask), NULL);
+  /* definition and creation of ethCat */
+  osThreadDef(ethCat, ethCatTask, osPriorityHigh, 0, 1024);
+  ethCatHandle = osThreadCreate(osThread(ethCat), NULL);
+
+  /* definition and creation of canM */
+  osThreadDef(canM, canMTask, osPriorityHigh, 0, 1024);
+  canMHandle = osThreadCreate(osThread(canM), NULL);
 
   /* definition and creation of canIdle */
-  osThreadDef(canIdle, canIdleTask, osPriorityAboveNormal, 0, 512);
+  osThreadDef(canIdle, canIdleTask, osPriorityHigh, 0, 512);
   canIdleHandle = osThreadCreate(osThread(canIdle), NULL);
-
-  /* definition and creation of appMd80 */
-  osThreadDef(appMd80, AppMd80_Task, osPriorityAboveNormal, 0, 1424);
-  appMd80Handle = osThreadCreate(osThread(appMd80), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+
 }
 
-/* USER CODE BEGIN Header_testTask */
+/* USER CODE BEGIN Header_appTestTask */
 /**
-  * @brief  Function implementing the appTestTask thread.
+  * @brief  Function implementing the appTest thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_testTask */
-__weak void testTask(void const * argument)
+/* USER CODE END Header_appTestTask */
+void appTestTask(void const * argument)
 {
-  /* USER CODE BEGIN testTask */
+  /* USER CODE BEGIN appTestTask */
+  AppTest_Init();
+
   /* Infinite loop */
   for(;;)
   {
+    AppTest_MainFunction();
+
     osDelay(1);
   }
-  /* USER CODE END testTask */
+  /* USER CODE END appTestTask */
 }
 
-/* USER CODE BEGIN Header_ethCat_Task */
+/* USER CODE BEGIN Header_ethCatTask */
 /**
-* @brief Function implementing the ethCatSlvTask thread.
+* @brief Function implementing the ethCat thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_ethCat_Task */
-__weak void ethCat_Task(void const * argument)
+/* USER CODE END Header_ethCatTask */
+void ethCatTask(void const * argument)
 {
-  /* USER CODE BEGIN ethCat_Task */
+  /* USER CODE BEGIN ethCatTask */
+  /* Initialize the modules which used by this application. */
+  ethCat_Init();
+
   /* Infinite loop */
   for(;;)
   {
+    /* Run main function of ethCat. */
+    ethCat_MainFunction();
+
     osDelay(1);
   }
-  /* USER CODE END ethCat_Task */
+  /* USER CODE END ethCatTask */
+}
+
+/* USER CODE BEGIN Header_canMTask */
+/**
+* @brief Function implementing the canM thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_canMTask */
+void canMTask(void const * argument)
+{
+  /* USER CODE BEGIN canMTask */
+  canM_Init (&canM_Module);
+
+  /* Infinite loop */
+  for(;;)
+  {
+    /* Run main function of canM. */
+    canM_MainFunction (&canM_Module);
+
+    osDelay(1);
+  }
+  /* USER CODE END canMTask */
 }
 
 /* USER CODE BEGIN Header_canIdleTask */
@@ -191,33 +250,20 @@ __weak void ethCat_Task(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_canIdleTask */
-__weak void canIdleTask(void const * argument)
+void canIdleTask(void const * argument)
 {
   /* USER CODE BEGIN canIdleTask */
+  canIdle_Init();
+
   /* Infinite loop */
   for(;;)
   {
+    /* Run the main function of CanIdle. */
+    canIdle_MainFunction();
+
     osDelay(1);
   }
   /* USER CODE END canIdleTask */
-}
-
-/* USER CODE BEGIN Header_AppMd80_Task */
-/**
-* @brief Function implementing the appMd80 thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_AppMd80_Task */
-__weak void AppMd80_Task(void const * argument)
-{
-  /* USER CODE BEGIN AppMd80_Task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END AppMd80_Task */
 }
 
 /* timerCounterCb function */

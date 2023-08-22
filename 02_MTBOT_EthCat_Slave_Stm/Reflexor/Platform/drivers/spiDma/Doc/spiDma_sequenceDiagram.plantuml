@@ -1,0 +1,41 @@
+@startuml
+participant tmcDriver
+participant SpiDma
+participant SPI
+participant DMA
+participant RTOS
+
+tmcDriver -> SpiDma: Trigger to start transmission of X bytes
+
+tmcDriver -> RTOS: Suspend task
+note right of tmcDriver: Task is suspended until \nSPI_DMA module completes\nthe transmission/reception
+
+SpiDma -> SpiDma: Transition to Tx state
+SpiDma -> SPI: Initiate SPI transmission of X bytes
+SPI -> DMA: Start DMA transfer of X bytes
+
+activate DMA
+DMA -> SpiDma: DMA Tx Complete of X bytes
+deactivate DMA
+SpiDma -> SpiDma: Transition to TxEnd state
+SpiDma -> tmcDriver: Notify transmission complete of X bytes
+
+tmcDriver -> RTOS: Resume task
+note right of tmcDriver: Task is resumed when SPI_DMA module\ncompletes the transmission/reception
+
+tmcDriver -> SpiDma: Trigger to start reception of Z bytes
+
+tmcDriver -> RTOS: Suspend task
+note right of tmcDriver: Task is suspended until \nSPI_DMA module completes\nthe transmission/reception
+SpiDma -> SpiDma: Transition to Rx state
+
+SpiDma -> SPI: Initiate SPI reception of Z bytes
+SPI -> DMA: Start DMA transfer of Z bytes
+activate DMA
+DMA -> SpiDma: DMA Rx Complete of Z bytes
+deactivate DMA
+SpiDma -> SpiDma: Transition to RxEnd state
+SpiDma -> tmcDriver: Notify reception complete of Z bytes
+tmcDriver -> RTOS: Resume task
+
+@enduml

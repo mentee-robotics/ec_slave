@@ -1,0 +1,27 @@
+
+
+Breakpoint=/home/minh/Project/MTBOT/02_MTBOT_EthCat_Slave_Stm/Reflexor/Platform/modules/canM/src/canM.c:232:1, State=BP_STATE_DISABLED
+Breakpoint=/home/minh/Project/MTBOT/02_MTBOT_EthCat_Slave_Stm/Reflexor/Platform/modules/canM/src/canM.c:238:1, State=BP_STATE_DISABLED
+Breakpoint=/home/minh/Project/MTBOT/02_MTBOT_EthCat_Slave_Stm/Reflexor/Platform/modules/canM/src/canM.c:536:4, State=BP_STATE_DISABLED
+Breakpoint=/home/minh/Project/MTBOT/02_MTBOT_EthCat_Slave_Stm/Reflexor/Platform/modules/canM/src/canM.c:539:8, State=BP_STATE_DISABLED
+Breakpoint=/home/minh/Project/MTBOT/02_MTBOT_EthCat_Slave_Stm/Reflexor/Core/Startup/startup_stm32g474rbtx.s:62, State=BP_STATE_ON
+OpenDocument="startup_stm32g474rbtx.s", FilePath="/home/minh/Project/MTBOT/02_MTBOT_EthCat_Slave_Stm/Reflexor/Core/Startup/startup_stm32g474rbtx.s", Line=52
+OpenDocument="", FilePath="", Line=0
+OpenToolbar="Debug", Floating=0, x=0, y=0
+OpenWindow="Call Stack", DockArea=RIGHT, x=0, y=2, w=642, h=235, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=642, h=189, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Break & Tracepoints", DockArea=LEFT, x=0, y=0, w=303, h=622, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, VectorCatchIndexMask=254
+OpenWindow="Memory 1", DockArea=BOTTOM, x=0, y=0, w=447, h=318, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, EditorAddress=0x0
+OpenWindow="Local Data", DockArea=RIGHT, x=0, y=1, w=642, h=186, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Watched Data 1", DockArea=BOTTOM, x=1, y=0, w=1395, h=318, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+SmartViewPlugin="", Page="", Toolbar="Hidden", Window="SmartView 1"
+TableHeader="Local Data", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Location";"Size";"Type";"Scope"], ColWidths=[126;180;100;100;100;100]
+TableHeader="Call Stack", SortCol="Function", SortOrder="ASCENDING", VisibleCols=["Function";"Stack Frame";"Source";"PC";"Return Address";"Stack Used"], ColWidths=[183;112;196;100;168;100]
+TableHeader="Power Sampling", SortCol="None", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Ch 0"], ColWidths=[100;100;100]
+TableHeader="Watched Data 1", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[142;239;100;914]
+TableHeader="RegisterSelectionDialog", SortCol="None", SortOrder="ASCENDING", VisibleCols=[], ColWidths=[]
+TableHeader="TargetExceptionDialog", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Address";"Description"], ColWidths=[200;100;100;374]
+TableHeader="Vector Catches", SortCol="", SortOrder="ASCENDING", VisibleCols=["";"Vector Catch";"Description"], ColWidths=[50;300;500]
+TableHeader="Break & Tracepoints", SortCol="", SortOrder="ASCENDING", VisibleCols=["";"Type";"Location";"Extras"], ColWidths=[100;100;329;280]
+WatchedExpression="canIdle_Module", Window=Watched Data 1
+WatchedExpression="pAppMd80", Window=Watched Data 1
