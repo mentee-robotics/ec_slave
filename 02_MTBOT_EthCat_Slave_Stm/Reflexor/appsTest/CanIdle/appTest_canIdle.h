@@ -34,6 +34,8 @@ typedef enum
    APPTEST_CANIDLE_ADD_MD80,
    APPTEST_CANIDLE_CONFIGURE_BAUDRATE,
    APPTEST_CANIDLE_MD80_SET_BAUDRATE,
+   APPTEST_CANIDLE_MD80_SAVE,
+   APPTEST_CANIDLE_MD80_RESET,
    APPTEST_CANIDLE_EXAMPLE1,
    APPTEST_CANIDLE_EXAMPLE2,
    APPTEST_CANIDLE_EXAMPLE3,
@@ -56,6 +58,9 @@ typedef struct
    float maxAngleRad;
    bool rotationCycle;
    bool isCanIdleEnabled;
+   tMd80_Baudrate md80BaudrateSet;
+   uint16_t newTimeoutMs;
+   bool isCanTermination;
 } tAppTest_CanIdle;
 
 /*---------------------------------------------------------------------------------------------------------------------

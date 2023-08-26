@@ -333,6 +333,15 @@ bool md80_Restart(tMd80_Device *const me)
 {
    bool ret = false;
 
+   me->local.command.toMd80.data[0] = MD80_FRAME_RESTART;
+   me->local.command.toMd80.data[1] = 0x00;
+   me->local.command.toMd80.length = 2u;
+
+   if (true == md80_Transmit(me, 50))
+   {
+      ret = true;
+   }
+
    return (ret);
 }
 
@@ -385,11 +394,11 @@ bool md80_ConfigMd80Can (tMd80_Device * const me,
 
    me->local.command.toMd80.data[0] = MD80_FRAME_CAN_CONFIG;
    me->local.command.toMd80.data[1] = 0x00;
-   *(uint16_t *)&me->local.command.toMd80.data[2] = me->config.canId;
+   *(uint16_t *)&me->local.command.toMd80.data[2] = canM_Devices[me->config.canId].local.init_info.tx_id.id;
    *(uint32_t *)&me->local.command.toMd80.data[4] = newBaudrateMbps * 1000000;
    *(uint16_t *)&me->local.command.toMd80.data[8] = newTimeout;
-   *(uint8_t *)&me->local.command.toMd80.data[10] = (uint8_t)(true == canTermination) ? 1U : 0U;
-   me->local.command.toMd80.length = 11u;
+   *(uint16_t *)&me->local.command.toMd80.data[10] = (uint16_t)(true == canTermination) ? 1U : 0U;
+   me->local.command.toMd80.length = 12u;
 
    if (true == md80_Transmit(me, 100))
    {
@@ -624,6 +633,6 @@ static void md80_PackMotionTargetsFrame(tMd80_Device *const me)
    *(float *)&me->local.command.toMd80.data[2] = me->input.velocity;
    *(float *)&me->local.command.toMd80.data[6] = me->input.position;
    *(float *)&me->local.command.toMd80.data[10] = me->input.torque;
-   *(float *)&me->local.command.toMd80.data[14] = (true == me->config. isTorqueMaxAdjust) ? me->config.torqueMax : 0;
-   *(float *)&me->local.command.toMd80.data[18] = (true == me->config. isTorqueMaxAdjust) ? me->config.velocityMax : 0;
+   *(float *)&me->local.command.toMd80.data[18] = (true == me->config.isTorqueMaxAdjust) ? me->config.velocityMax : 0;
+   *(float *)&me->local.command.toMd80.data[14] = (true == me->config.isTorqueMaxAdjust) ? me->config.torqueMax : 0;
 }

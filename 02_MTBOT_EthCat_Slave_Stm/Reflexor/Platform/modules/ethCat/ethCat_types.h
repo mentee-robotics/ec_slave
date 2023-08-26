@@ -35,6 +35,7 @@ typedef struct {
    uint16_t Position;
    uint16_t Velocity;
    uint16_t Torque;
+   uint8_t Mode;
    uint8_t enable;
    uint32_t counter;
 } tEthCat_md80Control;
@@ -46,12 +47,10 @@ typedef struct {
    uint16_t Velocity;
    uint16_t Torque;
    uint8_t Temperature;
-   uint16_t Error;
+   uint8_t Error;
    uint8_t enabled;
    uint32_t counter;
    uint32_t timestamp;
-   uint16_t encoderPos;
-   uint16_t encoderVel;
 } tEthCat_md80Return;
 
 /* TODO: Comment */

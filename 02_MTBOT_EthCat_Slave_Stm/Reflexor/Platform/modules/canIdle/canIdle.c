@@ -257,6 +257,9 @@ static void canIdle_GenericFrame(tCanIdle_Data *const app)
       md80_ConfigMd80Save(pMd80dev);
       break;
 
+   case MD80_FRAME_RESTART:
+      md80_Restart(pMd80dev);
+      break;
    default:
       break;
    }
@@ -317,8 +320,6 @@ static void canIdle_UpdateDataControl(void)
 {
    uint8_t md80idx = 0u;
    tMd80_Device *pMd80dev = NULL;
-   tEthCat_md80Control * pEcatMd80Ctl = NULL;
-   tEthCat_md80Return * pEcatMd80Res = NULL;
    _Objects * const pEcatObj = (_Objects *)&Obj;
 
    /* Update the data for all motor detected. */
@@ -334,71 +335,224 @@ static void canIdle_UpdateDataControl(void)
          switch (md80idx)
          {
          case 0:
-            pEcatMd80Ctl = (tEthCat_md80Control *)&pEcatObj->md80_0_DataControl;
-            pEcatMd80Res = (tEthCat_md80Return *)&pEcatObj->md80_0_DataReturn;
+
+            /* Enter critical section. */
+            taskENTER_CRITICAL();
+
+            /* Update the data control for corresponding md80. */
+            pMd80dev->input.velocity = CANIDLE_ETH_TO_REAL(pEcatObj->md80_0_DataControl.Velocity);
+            pMd80dev->input.position = CANIDLE_ETH_TO_REAL(pEcatObj->md80_0_DataControl.Position);
+            pMd80dev->input.torque = CANIDLE_ETH_TO_REAL(pEcatObj->md80_0_DataControl.Torque);
+
+            /* Update the data response from the corresponding md80. */
+            pEcatObj->md80_0_DataReturn.enabled = true;
+            pEcatObj->md80_0_DataReturn.Mode = pMd80dev->local.mode;
+            pEcatObj->md80_0_DataReturn.Position = CANIDLE_REAL_TO_ETH(pMd80dev->output.position);
+            pEcatObj->md80_0_DataReturn.Temperature = CANIDLE_REAL_TO_ETH(pMd80dev->output.temperature);
+            pEcatObj->md80_0_DataReturn.Torque = CANIDLE_REAL_TO_ETH(pMd80dev->output.torque);
+            pEcatObj->md80_0_DataReturn.Velocity = CANIDLE_REAL_TO_ETH(pMd80dev->output.velocity);
+            // pEcatObj->md80_0_DataReturn.encoderPos = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderPosition);
+            // pEcatObj->md80_0_DataReturn.encoderVel = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderVelocity);
+            pEcatObj->md80_0_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount() / portTICK_PERIOD_MS);
+            pEcatObj->md80_0_DataReturn.counter++;
+
+            /* Exit critical section. */
+            taskEXIT_CRITICAL();
+
             break;
 
          case 1:
-            pEcatMd80Ctl = (tEthCat_md80Control *)&pEcatObj->md80_1_DataControl;
-            pEcatMd80Res = (tEthCat_md80Return *)&pEcatObj->md80_1_DataReturn;
+
+            /* Enter critical section. */
+            taskENTER_CRITICAL();
+
+            /* Update the data control for corresponding md80. */
+            pMd80dev->input.velocity = CANIDLE_ETH_TO_REAL(pEcatObj->md80_1_DataControl.Velocity);
+            pMd80dev->input.position = CANIDLE_ETH_TO_REAL(pEcatObj->md80_1_DataControl.Position);
+            pMd80dev->input.torque = CANIDLE_ETH_TO_REAL(pEcatObj->md80_1_DataControl.Torque);
+
+            /* Update the data response from the corresponding md80. */
+            pEcatObj->md80_1_DataReturn.enabled = true;
+            pEcatObj->md80_1_DataReturn.Mode = pMd80dev->local.mode;
+            pEcatObj->md80_1_DataReturn.Position = CANIDLE_REAL_TO_ETH(pMd80dev->output.position);
+            pEcatObj->md80_1_DataReturn.Temperature = CANIDLE_REAL_TO_ETH(pMd80dev->output.temperature);
+            pEcatObj->md80_1_DataReturn.Torque = CANIDLE_REAL_TO_ETH(pMd80dev->output.torque);
+            pEcatObj->md80_1_DataReturn.Velocity = CANIDLE_REAL_TO_ETH(pMd80dev->output.velocity);
+            // pEcatObj->md80_1_DataReturn.encoderPos = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderPosition);
+            // pEcatObj->md80_1_DataReturn.encoderVel = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderVelocity);
+            pEcatObj->md80_1_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount() / portTICK_PERIOD_MS);
+            pEcatObj->md80_1_DataReturn.counter++;
+
+            /* Exit critical section. */
+            taskEXIT_CRITICAL();
+
             break;
 
          case 2:
-            pEcatMd80Ctl = (tEthCat_md80Control *)&pEcatObj->md80_2_DataControl;
-            pEcatMd80Res = (tEthCat_md80Return *)&pEcatObj->md80_2_DataReturn;
+
+            /* Enter critical section. */
+            taskENTER_CRITICAL();
+
+            /* Update the data control for corresponding md80. */
+            pMd80dev->input.velocity = CANIDLE_ETH_TO_REAL(pEcatObj->md80_2_DataControl.Velocity);
+            pMd80dev->input.position = CANIDLE_ETH_TO_REAL(pEcatObj->md80_2_DataControl.Position);
+            pMd80dev->input.torque = CANIDLE_ETH_TO_REAL(pEcatObj->md80_2_DataControl.Torque);
+
+            /* Update the data response from the corresponding md80. */
+            pEcatObj->md80_2_DataReturn.enabled = true;
+            pEcatObj->md80_2_DataReturn.Mode = pMd80dev->local.mode;
+            pEcatObj->md80_2_DataReturn.Position = CANIDLE_REAL_TO_ETH(pMd80dev->output.position);
+            pEcatObj->md80_2_DataReturn.Temperature = CANIDLE_REAL_TO_ETH(pMd80dev->output.temperature);
+            pEcatObj->md80_2_DataReturn.Torque = CANIDLE_REAL_TO_ETH(pMd80dev->output.torque);
+            pEcatObj->md80_2_DataReturn.Velocity = CANIDLE_REAL_TO_ETH(pMd80dev->output.velocity);
+            // pEcatObj->md80_2_DataReturn.encoderPos = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderPosition);
+            // pEcatObj->md80_2_DataReturn.encoderVel = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderVelocity);
+            pEcatObj->md80_2_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount() / portTICK_PERIOD_MS);
+            pEcatObj->md80_2_DataReturn.counter++;
+
+            /* Exit critical section. */
+            taskEXIT_CRITICAL();
+
             break;
 
          case 3:
-            pEcatMd80Ctl = (tEthCat_md80Control *)&pEcatObj->md80_3_DataControl;
-            pEcatMd80Res = (tEthCat_md80Return *)&pEcatObj->md80_3_DataReturn;
+
+            /* Enter critical section. */
+            taskENTER_CRITICAL();
+
+            /* Update the data control for corresponding md80. */
+            pMd80dev->input.velocity = CANIDLE_ETH_TO_REAL(pEcatObj->md80_3_DataControl.Velocity);
+            pMd80dev->input.position = CANIDLE_ETH_TO_REAL(pEcatObj->md80_3_DataControl.Position);
+            pMd80dev->input.torque = CANIDLE_ETH_TO_REAL(pEcatObj->md80_3_DataControl.Torque);
+
+            /* Update the data response from the corresponding md80. */
+            pEcatObj->md80_3_DataReturn.enabled = true;
+            pEcatObj->md80_3_DataReturn.Mode = pMd80dev->local.mode;
+            pEcatObj->md80_3_DataReturn.Position = CANIDLE_REAL_TO_ETH(pMd80dev->output.position);
+            pEcatObj->md80_3_DataReturn.Temperature = CANIDLE_REAL_TO_ETH(pMd80dev->output.temperature);
+            pEcatObj->md80_3_DataReturn.Torque = CANIDLE_REAL_TO_ETH(pMd80dev->output.torque);
+            pEcatObj->md80_3_DataReturn.Velocity = CANIDLE_REAL_TO_ETH(pMd80dev->output.velocity);
+            // pEcatObj->md80_3_DataReturn.encoderPos = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderPosition);
+            // pEcatObj->md80_3_DataReturn.encoderVel = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderVelocity);
+            pEcatObj->md80_3_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount() / portTICK_PERIOD_MS);
+            pEcatObj->md80_3_DataReturn.counter++;
+
+            /* Exit critical section. */
+            taskEXIT_CRITICAL();
+
             break;
          
          case 4:
-            pEcatMd80Ctl = (tEthCat_md80Control *)&pEcatObj->md80_4_DataControl;
-            pEcatMd80Res = (tEthCat_md80Return *)&pEcatObj->md80_4_DataReturn;
+
+            /* Enter critical section. */
+            taskENTER_CRITICAL();
+
+            /* Update the data control for corresponding md80. */
+            pMd80dev->input.velocity = CANIDLE_ETH_TO_REAL(pEcatObj->md80_4_DataControl.Velocity);
+            pMd80dev->input.position = CANIDLE_ETH_TO_REAL(pEcatObj->md80_4_DataControl.Position);
+            pMd80dev->input.torque = CANIDLE_ETH_TO_REAL(pEcatObj->md80_4_DataControl.Torque);
+
+            /* Update the data response from the corresponding md80. */
+            pEcatObj->md80_4_DataReturn.enabled = true;
+            pEcatObj->md80_4_DataReturn.Mode = pMd80dev->local.mode;
+            pEcatObj->md80_4_DataReturn.Position = CANIDLE_REAL_TO_ETH(pMd80dev->output.position);
+            pEcatObj->md80_4_DataReturn.Temperature = CANIDLE_REAL_TO_ETH(pMd80dev->output.temperature);
+            pEcatObj->md80_4_DataReturn.Torque = CANIDLE_REAL_TO_ETH(pMd80dev->output.torque);
+            pEcatObj->md80_4_DataReturn.Velocity = CANIDLE_REAL_TO_ETH(pMd80dev->output.velocity);
+            // pEcatObj->md80_4_DataReturn.encoderPos = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderPosition);
+            // pEcatObj->md80_4_DataReturn.encoderVel = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderVelocity);
+            pEcatObj->md80_4_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount() / portTICK_PERIOD_MS);
+            pEcatObj->md80_4_DataReturn.counter++;
+
+            /* Exit critical section. */
+            taskEXIT_CRITICAL();
+
             break;
          
          case 5:
-            pEcatMd80Ctl = (tEthCat_md80Control *)&pEcatObj->md80_5_DataControl;
-            pEcatMd80Res = (tEthCat_md80Return *)&pEcatObj->md80_5_DataReturn;
+
+            /* Enter critical section. */
+            taskENTER_CRITICAL();
+
+            /* Update the data control for corresponding md80. */
+            pMd80dev->input.velocity = CANIDLE_ETH_TO_REAL(pEcatObj->md80_5_DataControl.Velocity);
+            pMd80dev->input.position = CANIDLE_ETH_TO_REAL(pEcatObj->md80_5_DataControl.Position);
+            pMd80dev->input.torque = CANIDLE_ETH_TO_REAL(pEcatObj->md80_5_DataControl.Torque);
+
+            /* Update the data response from the corresponding md80. */
+            pEcatObj->md80_5_DataReturn.enabled = true;
+            pEcatObj->md80_5_DataReturn.Mode = pMd80dev->local.mode;
+            pEcatObj->md80_5_DataReturn.Position = CANIDLE_REAL_TO_ETH(pMd80dev->output.position);
+            pEcatObj->md80_5_DataReturn.Temperature = CANIDLE_REAL_TO_ETH(pMd80dev->output.temperature);
+            pEcatObj->md80_5_DataReturn.Torque = CANIDLE_REAL_TO_ETH(pMd80dev->output.torque);
+            pEcatObj->md80_5_DataReturn.Velocity = CANIDLE_REAL_TO_ETH(pMd80dev->output.velocity);
+            // pEcatObj->md80_5_DataReturn.encoderPos = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderPosition);
+            // pEcatObj->md80_5_DataReturn.encoderVel = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderVelocity);
+            pEcatObj->md80_5_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount() / portTICK_PERIOD_MS);
+            pEcatObj->md80_5_DataReturn.counter++;
+
+            /* Exit critical section. */
+            taskEXIT_CRITICAL();
+
             break;
          
          case 6:
-            pEcatMd80Ctl = (tEthCat_md80Control *)&pEcatObj->md80_6_DataControl;
-            pEcatMd80Res = (tEthCat_md80Return *)&pEcatObj->md80_6_DataReturn;
+
+            /* Enter critical section. */
+            taskENTER_CRITICAL();
+
+            /* Update the data control for corresponding md80. */
+            pMd80dev->input.velocity = CANIDLE_ETH_TO_REAL(pEcatObj->md80_6_DataControl.Velocity);
+            pMd80dev->input.position = CANIDLE_ETH_TO_REAL(pEcatObj->md80_6_DataControl.Position);
+            pMd80dev->input.torque = CANIDLE_ETH_TO_REAL(pEcatObj->md80_6_DataControl.Torque);
+
+            /* Update the data response from the corresponding md80. */
+            pEcatObj->md80_6_DataReturn.enabled = true;
+            pEcatObj->md80_6_DataReturn.Mode = pMd80dev->local.mode;
+            pEcatObj->md80_6_DataReturn.Position = CANIDLE_REAL_TO_ETH(pMd80dev->output.position);
+            pEcatObj->md80_6_DataReturn.Temperature = CANIDLE_REAL_TO_ETH(pMd80dev->output.temperature);
+            pEcatObj->md80_6_DataReturn.Torque = CANIDLE_REAL_TO_ETH(pMd80dev->output.torque);
+            pEcatObj->md80_6_DataReturn.Velocity = CANIDLE_REAL_TO_ETH(pMd80dev->output.velocity);
+            // pEcatObj->md80_6_DataReturn.encoderPos = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderPosition);
+            // pEcatObj->md80_6_DataReturn.encoderVel = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderVelocity);
+            pEcatObj->md80_6_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount() / portTICK_PERIOD_MS);
+            pEcatObj->md80_6_DataReturn.counter++;
+
+            /* Exit critical section. */
+            taskEXIT_CRITICAL();
+
             break;
          
          case 7:
-            pEcatMd80Ctl = (tEthCat_md80Control *)&pEcatObj->md80_7_DataControl;
-            pEcatMd80Res = (tEthCat_md80Return *)&pEcatObj->md80_7_DataReturn;
+
+            /* Enter critical section. */
+            taskENTER_CRITICAL();
+
+            /* Update the data control for corresponding md80. */
+            pMd80dev->input.velocity = CANIDLE_ETH_TO_REAL(pEcatObj->md80_7_DataControl.Velocity);
+            pMd80dev->input.position = CANIDLE_ETH_TO_REAL(pEcatObj->md80_7_DataControl.Position);
+            pMd80dev->input.torque = CANIDLE_ETH_TO_REAL(pEcatObj->md80_7_DataControl.Torque);
+
+            /* Update the data response from the corresponding md80. */
+            pEcatObj->md80_7_DataReturn.enabled = true;
+            pEcatObj->md80_7_DataReturn.Mode = pMd80dev->local.mode;
+            pEcatObj->md80_7_DataReturn.Position = CANIDLE_REAL_TO_ETH(pMd80dev->output.position);
+            pEcatObj->md80_7_DataReturn.Temperature = CANIDLE_REAL_TO_ETH(pMd80dev->output.temperature);
+            pEcatObj->md80_7_DataReturn.Torque = CANIDLE_REAL_TO_ETH(pMd80dev->output.torque);
+            pEcatObj->md80_7_DataReturn.Velocity = CANIDLE_REAL_TO_ETH(pMd80dev->output.velocity);
+            // pEcatObj->md80_7_DataReturn.encoderPos = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderPosition);
+            // pEcatObj->md80_7_DataReturn.encoderVel = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderVelocity);
+            pEcatObj->md80_7_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount() / portTICK_PERIOD_MS);
+            pEcatObj->md80_7_DataReturn.counter++;
+
+            /* Exit critical section. */
+            taskEXIT_CRITICAL();
+
             break;
 
          default:
             break;
          }
-         
-         /* Enter critical section. */
-         taskENTER_CRITICAL();
-
-         /* Update the data control for corresponding md80. */
-         pMd80dev->input.velocity = CANIDLE_ETH_TO_REAL(pEcatMd80Ctl->Velocity);
-         pMd80dev->input.position = CANIDLE_ETH_TO_REAL(pEcatMd80Ctl->Position);
-         pMd80dev->input.torque = CANIDLE_ETH_TO_REAL(pEcatMd80Ctl->Torque);
-
-         /* Update the data response from the corresponding md80. */
-         pEcatMd80Res->enabled = true;
-         pEcatMd80Res->Mode = pMd80dev->local.mode;
-         pEcatMd80Res->Position = CANIDLE_REAL_TO_ETH(pMd80dev->output.position);
-         pEcatMd80Res->Temperature = CANIDLE_REAL_TO_ETH(pMd80dev->output.temperature);
-         pEcatMd80Res->Torque = CANIDLE_REAL_TO_ETH(pMd80dev->output.torque);
-         pEcatMd80Res->Velocity = CANIDLE_REAL_TO_ETH(pMd80dev->output.velocity);
-         pEcatMd80Res->encoderPos = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderPosition);
-         pEcatMd80Res->encoderVel = CANIDLE_REAL_TO_ETH(pMd80dev->output.encoderVelocity);
-         pEcatMd80Res->timestamp = (uint32_t)(xTaskGetTickCount() / portTICK_PERIOD_MS);
-         pEcatMd80Res->counter++;
-
-         /* Exit critical section. */
-         taskEXIT_CRITICAL();
       }
    }
 }
@@ -649,7 +803,8 @@ void canIdle_UpdateCmd (uint8_t md80id, uint8_t command, uint8_t size, uint8_t *
 
 void canIdle_Init()
 {
-
+   /* Configuration the baudrate of CAN to 1M. */
+   canM_SetNewBaudrate(CAN_BAUD_1M);
 }
 
 void canIdle_Deinit()

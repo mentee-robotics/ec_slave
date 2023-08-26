@@ -165,7 +165,7 @@ void MX_FREERTOS_Init(void) {
   canMHandle = osThreadCreate(osThread(canM), NULL);
 
   /* definition and creation of canIdle */
-  osThreadDef(canIdle, canIdleTask, osPriorityHigh, 0, 512);
+  osThreadDef(canIdle, canIdleTask, osPriorityAboveNormal, 0, 512);
   canIdleHandle = osThreadCreate(osThread(canIdle), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */

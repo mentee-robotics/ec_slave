@@ -24,7 +24,7 @@
 
 /* Constants */
 #define NSEC_PER_SEC (1000000000)
-#define FREQUENCY ((NSEC_PER_SEC / PERIOD_NS)) // 1s
+#define FREQUENCY ((NSEC_PER_SEC / PERIOD_NS)/2) // 0.5s
 #define SDOS_TOTAL_MAX_MEMBER (21U)
 
 #define MAX_SAFE_STACK (8 * 1024) /* The maximum stack size which is \
@@ -104,6 +104,9 @@ typedef enum
    ETHCATNODE_DEV_BEGIN = 12,
    ETHCATNODE_DEV_END = 13,
    ETHCATNODE_DEV_SET_IMP_MODE = 14,
+   ETHCATNODE_DEV_RST = 15,
+   ETHCATNODE_DEV_CONFIG1M_DIS_WATCHDOG = 16,
+   ETHCATNODE_DEV_MD80_RST = 17,
 } tEthNodeStates;
 
 typedef struct
@@ -147,8 +150,11 @@ static uint8_t *domain1_pd = NULL;
 /* Alias and position of EtherCat slave 1. */
 #define mtbotLanNode1 0, 0                         /* Alias, Position.       */
 #define MTBOT_LAN9252_NODE1 0x00000002, 0x000ab789 /* VectorID ,Product Id.  */
+#define mtbotLanNode2 0, 1                         /* Alias, Position.       */
+#define MTBOT_LAN9252_NODE2 0x00000002, 0x000ab789 /* VectorID ,Product Id.  */
 
 static _Objects  mtBotDataNode1;
+static _Objects  mtBotDataNode2;
 
 const static ec_pdo_entry_reg_t domain1_regs[] = {
     /* Array address of MD80 detected on FDCAN bus. */
@@ -297,6 +303,155 @@ const static ec_pdo_entry_reg_t domain1_regs[] = {
     {mtbotLanNode1, MTBOT_LAN9252_NODE1, 0x7008, 4, &mtBotDataNode1.md80_7_DataControl.Mode},
     {mtbotLanNode1, MTBOT_LAN9252_NODE1, 0x7008, 5, &mtBotDataNode1.md80_7_DataControl.enable},
     {mtbotLanNode1, MTBOT_LAN9252_NODE1, 0x7008, 6, &mtBotDataNode1.md80_7_DataControl.counter},
+    {}};
+
+const static ec_pdo_entry_reg_t domain2_regs[] = {
+    /* Array address of MD80 detected on FDCAN bus. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6000, 1, &mtBotDataNode2.md80_addrs[0]},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6000, 2, &mtBotDataNode2.md80_addrs[1]},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6000, 3, &mtBotDataNode2.md80_addrs[2]},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6000, 4, &mtBotDataNode2.md80_addrs[3]},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6000, 5, &mtBotDataNode2.md80_addrs[4]},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6000, 6, &mtBotDataNode2.md80_addrs[5]},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6000, 7, &mtBotDataNode2.md80_addrs[6]},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6000, 8, &mtBotDataNode2.md80_addrs[7]},
+    /* Return data of MD80 ID 0. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6001, 1, &mtBotDataNode2.md80_0_DataReturn.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6001, 2, &mtBotDataNode2.md80_0_DataReturn.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6001, 3, &mtBotDataNode2.md80_0_DataReturn.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6001, 4, &mtBotDataNode2.md80_0_DataReturn.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6001, 5, &mtBotDataNode2.md80_0_DataReturn.Temperature},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6001, 6, &mtBotDataNode2.md80_0_DataReturn.Error},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6001, 7, &mtBotDataNode2.md80_0_DataReturn.enabled},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6001, 8, &mtBotDataNode2.md80_0_DataReturn.counter},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6001, 9, &mtBotDataNode2.md80_0_DataReturn.timestamp},
+    /* Return data of MD80 ID 1. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6002, 1, &mtBotDataNode2.md80_1_DataReturn.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6002, 2, &mtBotDataNode2.md80_1_DataReturn.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6002, 3, &mtBotDataNode2.md80_1_DataReturn.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6002, 4, &mtBotDataNode2.md80_1_DataReturn.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6002, 5, &mtBotDataNode2.md80_1_DataReturn.Temperature},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6002, 6, &mtBotDataNode2.md80_1_DataReturn.Error},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6002, 7, &mtBotDataNode2.md80_1_DataReturn.enabled},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6002, 8, &mtBotDataNode2.md80_1_DataReturn.counter},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6002, 9, &mtBotDataNode2.md80_1_DataReturn.timestamp},
+    /* Return data of MD80 ID 2. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6003, 1, &mtBotDataNode2.md80_2_DataReturn.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6003, 2, &mtBotDataNode2.md80_2_DataReturn.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6003, 3, &mtBotDataNode2.md80_2_DataReturn.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6003, 4, &mtBotDataNode2.md80_2_DataReturn.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6003, 5, &mtBotDataNode2.md80_2_DataReturn.Temperature},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6003, 6, &mtBotDataNode2.md80_2_DataReturn.Error},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6003, 7, &mtBotDataNode2.md80_2_DataReturn.enabled},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6003, 8, &mtBotDataNode2.md80_2_DataReturn.counter},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6003, 9, &mtBotDataNode2.md80_2_DataReturn.timestamp},
+    /* Return data of MD80 ID 3. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6004, 1, &mtBotDataNode2.md80_3_DataReturn.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6004, 2, &mtBotDataNode2.md80_3_DataReturn.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6004, 3, &mtBotDataNode2.md80_3_DataReturn.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6004, 4, &mtBotDataNode2.md80_3_DataReturn.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6004, 5, &mtBotDataNode2.md80_3_DataReturn.Temperature},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6004, 6, &mtBotDataNode2.md80_3_DataReturn.Error},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6004, 7, &mtBotDataNode2.md80_3_DataReturn.enabled},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6004, 8, &mtBotDataNode2.md80_3_DataReturn.counter},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6004, 9, &mtBotDataNode2.md80_3_DataReturn.timestamp},
+    /* Return data of MD80 ID 4. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6005, 1, &mtBotDataNode2.md80_4_DataReturn.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6005, 2, &mtBotDataNode2.md80_4_DataReturn.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6005, 3, &mtBotDataNode2.md80_4_DataReturn.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6005, 4, &mtBotDataNode2.md80_4_DataReturn.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6005, 5, &mtBotDataNode2.md80_4_DataReturn.Temperature},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6005, 6, &mtBotDataNode2.md80_4_DataReturn.Error},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6005, 7, &mtBotDataNode2.md80_4_DataReturn.enabled},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6005, 8, &mtBotDataNode2.md80_4_DataReturn.counter},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6005, 9, &mtBotDataNode2.md80_4_DataReturn.timestamp},
+    /* Return data of MD80 ID 5. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6006, 1, &mtBotDataNode2.md80_5_DataReturn.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6006, 2, &mtBotDataNode2.md80_5_DataReturn.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6006, 3, &mtBotDataNode2.md80_5_DataReturn.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6006, 4, &mtBotDataNode2.md80_5_DataReturn.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6006, 5, &mtBotDataNode2.md80_5_DataReturn.Temperature},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6006, 6, &mtBotDataNode2.md80_5_DataReturn.Error},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6006, 7, &mtBotDataNode2.md80_5_DataReturn.enabled},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6006, 8, &mtBotDataNode2.md80_5_DataReturn.counter},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6006, 9, &mtBotDataNode2.md80_5_DataReturn.timestamp},
+    /* Return data of MD80 ID 6. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6007, 1, &mtBotDataNode2.md80_6_DataReturn.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6007, 2, &mtBotDataNode2.md80_6_DataReturn.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6007, 3, &mtBotDataNode2.md80_6_DataReturn.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6007, 4, &mtBotDataNode2.md80_6_DataReturn.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6007, 5, &mtBotDataNode2.md80_6_DataReturn.Temperature},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6007, 6, &mtBotDataNode2.md80_6_DataReturn.Error},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6007, 7, &mtBotDataNode2.md80_6_DataReturn.enabled},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6007, 8, &mtBotDataNode2.md80_6_DataReturn.counter},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6007, 9, &mtBotDataNode2.md80_6_DataReturn.timestamp},
+    /* Return data of MD80 ID 7. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6008, 1, &mtBotDataNode2.md80_7_DataReturn.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6008, 2, &mtBotDataNode2.md80_7_DataReturn.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6008, 3, &mtBotDataNode2.md80_7_DataReturn.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6008, 4, &mtBotDataNode2.md80_7_DataReturn.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6008, 5, &mtBotDataNode2.md80_7_DataReturn.Temperature},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6008, 6, &mtBotDataNode2.md80_7_DataReturn.Error},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6008, 7, &mtBotDataNode2.md80_7_DataReturn.enabled},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6008, 8, &mtBotDataNode2.md80_7_DataReturn.counter},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x6008, 9, &mtBotDataNode2.md80_7_DataReturn.timestamp},
+
+    /* Return data of MD80 ID 0. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7001, 1, &mtBotDataNode2.md80_0_DataControl.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7001, 2, &mtBotDataNode2.md80_0_DataControl.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7001, 3, &mtBotDataNode2.md80_0_DataControl.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7001, 4, &mtBotDataNode2.md80_0_DataControl.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7001, 5, &mtBotDataNode2.md80_0_DataControl.enable},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7001, 6, &mtBotDataNode2.md80_0_DataControl.counter},
+    /* Return data of MD80 ID 1. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7002, 1, &mtBotDataNode2.md80_1_DataControl.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7002, 2, &mtBotDataNode2.md80_1_DataControl.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7002, 3, &mtBotDataNode2.md80_1_DataControl.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7002, 4, &mtBotDataNode2.md80_1_DataControl.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7002, 5, &mtBotDataNode2.md80_1_DataControl.enable},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7002, 6, &mtBotDataNode2.md80_1_DataControl.counter},
+    /* Return data of MD80 ID 2. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7003, 1, &mtBotDataNode2.md80_2_DataControl.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7003, 2, &mtBotDataNode2.md80_2_DataControl.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7003, 3, &mtBotDataNode2.md80_2_DataControl.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7003, 4, &mtBotDataNode2.md80_2_DataControl.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7003, 5, &mtBotDataNode2.md80_2_DataControl.enable},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7003, 6, &mtBotDataNode2.md80_2_DataControl.counter},
+    /* Return data of MD80 ID 3. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7004, 1, &mtBotDataNode2.md80_3_DataControl.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7004, 2, &mtBotDataNode2.md80_3_DataControl.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7004, 3, &mtBotDataNode2.md80_3_DataControl.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7004, 4, &mtBotDataNode2.md80_3_DataControl.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7004, 5, &mtBotDataNode2.md80_3_DataControl.enable},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7004, 6, &mtBotDataNode2.md80_3_DataControl.counter},
+    /* Return data of MD80 ID 4. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7005, 1, &mtBotDataNode2.md80_4_DataControl.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7005, 2, &mtBotDataNode2.md80_4_DataControl.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7005, 3, &mtBotDataNode2.md80_4_DataControl.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7005, 4, &mtBotDataNode2.md80_4_DataControl.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7005, 5, &mtBotDataNode2.md80_4_DataControl.enable},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7005, 6, &mtBotDataNode2.md80_4_DataControl.counter},
+    /* Return data of MD80 ID 5. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7006, 1, &mtBotDataNode2.md80_5_DataControl.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7006, 2, &mtBotDataNode2.md80_5_DataControl.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7006, 3, &mtBotDataNode2.md80_5_DataControl.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7006, 4, &mtBotDataNode2.md80_5_DataControl.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7006, 5, &mtBotDataNode2.md80_5_DataControl.enable},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7006, 6, &mtBotDataNode2.md80_5_DataControl.counter},
+    /* Return data of MD80 ID 6. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7007, 1, &mtBotDataNode2.md80_6_DataControl.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7007, 2, &mtBotDataNode2.md80_6_DataControl.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7007, 3, &mtBotDataNode2.md80_6_DataControl.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7007, 4, &mtBotDataNode2.md80_6_DataControl.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7007, 5, &mtBotDataNode2.md80_6_DataControl.enable},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7007, 6, &mtBotDataNode2.md80_6_DataControl.counter},
+    /* Return data of MD80 ID 7. */
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7008, 1, &mtBotDataNode2.md80_7_DataControl.Position},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7008, 2, &mtBotDataNode2.md80_7_DataControl.Velocity},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7008, 3, &mtBotDataNode2.md80_7_DataControl.Torque},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7008, 4, &mtBotDataNode2.md80_7_DataControl.Mode},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7008, 5, &mtBotDataNode2.md80_7_DataControl.enable},
+    {mtbotLanNode2, MTBOT_LAN9252_NODE2, 0x7008, 6, &mtBotDataNode2.md80_7_DataControl.counter},
     {}};
 
 // EtherCAT
@@ -458,6 +613,153 @@ static ec_pdo_entry_info_t mtbotNode1_pdo_entries[] = {
     {0x7008, 6, 32}, // channel 1 status
 };
 
+static ec_pdo_entry_info_t mtbotNode2_pdo_entries[] = {
+    {0x6000, 1, 32}, /* Md80_0 address. */
+    {0x6000, 2, 32}, /* Md80_1 address. */
+    {0x6000, 3, 32}, /* Md80_2 address. */
+    {0x6000, 4, 32}, /* Md80_3 address. */
+    {0x6000, 5, 32}, /* Md80_4 address. */
+    {0x6000, 6, 32}, /* Md80_5 address. */
+    {0x6000, 7, 32}, /* Md80_6 address. */
+    {0x6000, 8, 32}, /* Md80_7 address. */
+
+    {0x6001, 1, 8},  // channel 1 status
+    {0x6001, 2, 16}, // channel 1 status
+    {0x6001, 3, 16}, // channel 1 status
+    {0x6001, 4, 16}, // channel 1 status
+    {0x6001, 5, 8},  // channel 1 status
+    {0x6001, 6, 8},  // channel 1 status
+    {0x6001, 7, 8},  // channel 1 status
+    {0x6001, 8, 32}, // channel 1 status
+    {0x6001, 9, 32}, // channel 1 status
+
+    {0x6002, 1, 8},  // channel 2 status
+    {0x6002, 2, 16}, // channel 2 status
+    {0x6002, 3, 16}, // channel 2 status
+    {0x6002, 4, 16}, // channel 2 status
+    {0x6002, 5, 8},  // channel 2 status
+    {0x6002, 6, 8},  // channel 2 status
+    {0x6002, 7, 8},  // channel 2 status
+    {0x6002, 8, 32}, // channel 1 status
+    {0x6002, 9, 32}, // channel 1 status
+
+    {0x6003, 1, 8},  // channel 3 status
+    {0x6003, 2, 16}, // channel 3 status
+    {0x6003, 3, 16}, // channel 3 status
+    {0x6003, 4, 16}, // channel 3 status
+    {0x6003, 5, 8},  // channel 3 status
+    {0x6003, 6, 8},  // channel 3 status
+    {0x6003, 7, 8},  // channel 3 status
+    {0x6003, 8, 32}, // channel 1 status
+    {0x6003, 9, 32}, // channel 1 status
+
+    {0x6004, 1, 8},  // channel 4 status
+    {0x6004, 2, 16}, // channel 4 status
+    {0x6004, 3, 16}, // channel 4 status
+    {0x6004, 4, 16}, // channel 4 status
+    {0x6004, 5, 8},  // channel 4 status
+    {0x6004, 6, 8},  // channel 4 status
+    {0x6004, 7, 8},  // channel 4 status
+    {0x6004, 8, 32}, // channel 1 status
+    {0x6004, 9, 32}, // channel 1 status
+
+    {0x6005, 1, 8},  // channel 4 status
+    {0x6005, 2, 16}, // channel 4 status
+    {0x6005, 3, 16}, // channel 4 status
+    {0x6005, 4, 16}, // channel 4 status
+    {0x6005, 5, 8},  // channel 4 status
+    {0x6005, 6, 8},  // channel 4 status
+    {0x6005, 7, 8},  // channel 4 status
+    {0x6005, 8, 32}, // channel 1 status
+    {0x6005, 9, 32}, // channel 1 status
+
+    {0x6006, 1, 8},  // channel 4 status
+    {0x6006, 2, 16}, // channel 4 status
+    {0x6006, 3, 16}, // channel 4 status
+    {0x6006, 4, 16}, // channel 4 status
+    {0x6006, 5, 8},  // channel 4 status
+    {0x6006, 6, 8},  // channel 4 status
+    {0x6006, 7, 8},  // channel 4 status
+    {0x6006, 8, 32}, // channel 1 status
+    {0x6006, 9, 32}, // channel 1 status
+
+    {0x6007, 1, 8},  // channel 4 status
+    {0x6007, 2, 16}, // channel 4 status
+    {0x6007, 3, 16}, // channel 4 status
+    {0x6007, 4, 16}, // channel 4 status
+    {0x6007, 5, 8},  // channel 4 status
+    {0x6007, 6, 8},  // channel 4 status
+    {0x6007, 7, 8},  // channel 4 status
+    {0x6007, 8, 32}, // channel 1 status
+    {0x6007, 9, 32}, // channel 1 status
+
+    {0x6008, 1, 8},  // channel 4 status
+    {0x6008, 2, 16}, // channel 4 status
+    {0x6008, 3, 16}, // channel 4 status
+    {0x6008, 4, 16}, // channel 4 status
+    {0x6008, 5, 8},  // channel 4 status
+    {0x6008, 6, 8},  // channel 4 status
+    {0x6008, 7, 8},  // channel 4 status
+    {0x6008, 8, 32}, // channel 1 status
+    {0x6008, 9, 32}, // channel 1 status
+
+    {0x7001, 1, 16}, // channel 1 status
+    {0x7001, 2, 16}, // channel 1 status
+    {0x7001, 3, 16}, // channel 1 status
+    {0x7001, 4, 8},  // channel 1 status
+    {0x7001, 5, 8},  // channel 1 status
+    {0x7001, 6, 32}, // channel 1 status
+
+    {0x7002, 1, 16}, // channel 2 status
+    {0x7002, 2, 16}, // channel 2 status
+    {0x7002, 3, 16}, // channel 2 status
+    {0x7002, 4, 8},  // channel 2 status
+    {0x7002, 5, 8},  // channel 2 status
+    {0x7002, 6, 32}, // channel 1 status
+
+    {0x7003, 1, 16}, // channel 3 status
+    {0x7003, 2, 16}, // channel 3 status
+    {0x7003, 3, 16}, // channel 3 status
+    {0x7003, 4, 8},  // channel 3 status
+    {0x7003, 5, 8},  // channel 3 status
+    {0x7003, 6, 32}, // channel 1 status
+
+    {0x7004, 1, 16}, // channel 4 status
+    {0x7004, 2, 16}, // channel 4 status
+    {0x7004, 3, 16}, // channel 4 status
+    {0x7004, 4, 8},  // channel 4 status
+    {0x7004, 5, 8},  // channel 4 status
+    {0x7004, 6, 32}, // channel 1 status
+
+    {0x7005, 1, 16}, // channel 4 status
+    {0x7005, 2, 16}, // channel 4 status
+    {0x7005, 3, 16}, // channel 4 status
+    {0x7005, 4, 8},  // channel 4 status
+    {0x7005, 5, 8},  // channel 4 status
+    {0x7005, 6, 32}, // channel 1 status
+
+    {0x7006, 1, 16}, // channel 4 status
+    {0x7006, 2, 16}, // channel 4 status
+    {0x7006, 3, 16}, // channel 4 status
+    {0x7006, 4, 8},  // channel 4 status
+    {0x7006, 5, 8},  // channel 4 status
+    {0x7006, 6, 32}, // channel 1 status
+
+    {0x7007, 1, 16}, // channel 4 status
+    {0x7007, 2, 16}, // channel 4 status
+    {0x7007, 3, 16}, // channel 4 status
+    {0x7007, 4, 8},  // channel 4 status
+    {0x7007, 5, 8},  // channel 4 status
+    {0x7007, 6, 32}, // channel 1 status
+
+    {0x7008, 1, 16}, // channel 4 status
+    {0x7008, 2, 16}, // channel 4 status
+    {0x7008, 3, 16}, // channel 4 status
+    {0x7008, 4, 8},  // channel 4 status
+    {0x7008, 5, 8},  // channel 4 status
+    {0x7008, 6, 32}, // channel 1 status
+};
+
 static ec_pdo_info_t mtbotNode1_pdos[] = {
     {0x1A00, 80, mtbotNode1_pdo_entries},
     {0x1600, 48, mtbotNode1_pdo_entries + 80}};
@@ -465,6 +767,15 @@ static ec_pdo_info_t mtbotNode1_pdos[] = {
 static ec_sync_info_t mtbotNode1_syncs[] = {
     {2, EC_DIR_OUTPUT, 1, mtbotNode1_pdos + 1},
     {3, EC_DIR_INPUT, 1, mtbotNode1_pdos},
+    {0xff}};
+
+static ec_pdo_info_t mtbotNode2_pdos[] = {
+    {0x1A00, 80, mtbotNode2_pdo_entries},
+    {0x1600, 48, mtbotNode2_pdo_entries + 80}};
+
+static ec_sync_info_t mtbotNode2_syncs[] = {
+    {2, EC_DIR_OUTPUT, 1, mtbotNode2_pdos + 1},
+    {3, EC_DIR_INPUT, 1, mtbotNode2_pdos},
     {0xff}};
 
 /* Define number of node etherCat. */
@@ -480,9 +791,23 @@ static tEthNodeData ethNode[ETHCAT_NODE_NUM] = {
         .sync_info = (ec_sync_info_t *)&mtbotNode1_syncs[0],
         .angleRadDt = 0.0f,
         .angleRadMax = 2 * M_PI,
-        .angleRadDt = 0.1f,
+        .angleRadDt = 0.01f,
         .rotationCycle = true,
     },
+    /* Node 2. */
+    {
+        .domain_regs = domain2_regs,
+        .data = &mtBotDataNode2,
+        .aliasId = 0,
+        .posId = 1,
+        .vectorId = 0x00000002U,
+        .productId = 0x000ab789U,
+        .sync_info = (ec_sync_info_t *)&mtbotNode2_syncs[0],
+        .angleRadDt = 0.0f,
+        .angleRadMax = 2 * M_PI,
+        .angleRadDt = 0.01f,
+        .rotationCycle = true,
+    }
 };
 
 static uint32_t counter = 0U;
@@ -731,6 +1056,17 @@ void cyclic_task()
          switch (ethNode[iter].state)
          {
          case ETHCATNODE_IDLE:
+            nextState = ETHCATNODE_DEV_RST;
+            break;
+
+         case ETHCATNODE_DEV_RST:
+            printf("EthNode: %d StepInit 0: Reset dev.\n", iter);
+            /* Request scan motor on can bus. */
+            ethNode[iter].data->md80_Command.md80_dev_no = 0;
+            ethNode[iter].data->md80_Command.counter = ++counterCmd;
+            ethNode[iter].data->md80_Command.size = 0;
+            ethNode[iter].data->md80_Command.command = BUS_FRAME_RESET;
+            reflexor_sdos_write(&ethNode[iter]);
             nextState = ETHCATNODE_DEV_SCAN;
             break;
 
@@ -812,6 +1148,108 @@ void cyclic_task()
 
             break;
 
+         case ETHCATNODE_DEV_CONFIG1M_DIS_WATCHDOG:
+            isAllowReq = false;
+            if (ethNode[iter].md80Id < ethNode[iter].numMd80)
+            {
+               if ((ethNode[iter].data->md80_Respond.command == BUS_FRAME_MD80_GENERIC_FRAME) && 
+                   (ethNode[iter].data->md80_Respond.md80_dev_no == ethNode[iter].md80Id))
+               {
+                  ethNode[iter].md80Id++;
+                  isAllowReq = true;
+
+                  if (ethNode[iter].numMd80 <= ethNode[iter].md80Id)
+                  {
+#ifdef MD80_RESET
+                     nextState = ETHCATNODE_DEV_MD80_RST;
+#else 
+                     nextState = ETHCATNODE_DEV_SET_IMP_MODE;
+#endif
+                     ethNode[iter].md80Id = 0u;
+                     isAllowReq = false;
+                  }
+               }
+               else if (ethNode[iter].md80Id == 0) 
+               {
+                  isAllowReq = true;
+               }
+            }
+
+            if (true == isAllowReq)
+            {
+               printf("EthNode: %d Set mdId: %d with baudrate 1M and disable timeout.\n", iter, ethNode[iter].md80Id);
+               uint32_t baudrate = 1U;
+               uint16_t newTimeout = 0u;
+               uint8_t canTermination = 0u;
+
+               ethNode[iter].cmd[0] = MD80_FRAME_CAN_CONFIG;
+               ethNode[iter].cmd[1] = 0x00;
+               memcpy((void *)&ethNode[iter].cmd[4], (void *)&baudrate, sizeof(uint32_t));
+               memcpy((void *)&ethNode[iter].cmd[8], (void *)&newTimeout, sizeof(uint16_t));
+               memcpy((void *)&ethNode[iter].cmd[10], (void *)&canTermination, sizeof(uint16_t));
+
+               /* Add motor command. */
+               ethNode[iter].data->md80_Command.md80_dev_no = ethNode[iter].md80Id;
+               ethNode[iter].data->md80_Command.command = BUS_FRAME_MD80_GENERIC_FRAME;
+               ethNode[iter].data->md80_Command.size = 12;
+               ethNode[iter].data->md80_Command.counter = ++counterCmd;
+               ethNode[iter].data->md80_Command.dataSet0 = *(uint32_t *)&ethNode[iter].cmd[0];
+               ethNode[iter].data->md80_Command.dataSet1 = *(uint32_t *)&ethNode[iter].cmd[4];
+               ethNode[iter].data->md80_Command.dataSet1 = *(uint8_t *)&ethNode[iter].cmd[8];
+               reflexor_sdos_write(&ethNode[iter]);
+               
+               isAllowReq = false;
+            }
+
+            break;
+
+#ifdef MD80_RESET
+         case ETHCATNODE_DEV_MD80_RST:
+            isAllowReq = false;
+            if (ethNode[iter].md80Id < ethNode[iter].numMd80)
+            {
+               if ((ethNode[iter].data->md80_Respond.command == BUS_FRAME_MD80_GENERIC_FRAME) && 
+                   (ethNode[iter].data->md80_Respond.md80_dev_no == ethNode[iter].md80Id))
+               {
+                  ethNode[iter].md80Id++;
+                  isAllowReq = true;
+
+                  if (ethNode[iter].numMd80 <= ethNode[iter].md80Id)
+                  {
+                     nextState = ETHCATNODE_IDLE;
+                     ethNode[iter].md80Id = 0u;
+                     isAllowReq = false;
+                  }
+               }
+               else if (ethNode[iter].md80Id == 0) 
+               {
+                  isAllowReq = true;
+               }
+            }
+
+            if (true == isAllowReq)
+            {
+               printf("EthNode: %d Reset mdId: %d\n", iter);
+
+               ethNode[iter].cmd[0] = MD80_FRAME_RESTART;
+               ethNode[iter].cmd[1] = 0x00;
+               memcpy((void *)&ethNode[iter].cmd[2], (void *)&baudrate, sizeof(uint32_t));
+               memcpy((void *)&ethNode[iter].cmd[6], (void *)&newTimeout, sizeof(uint16_t));
+               memcpy((void *)&ethNode[iter].cmd[8], (void *)&canTermination, sizeof(uint8_t));
+
+               /* Add motor command. */
+               ethNode[iter].data->md80_Command.md80_dev_no = ethNode[iter].md80Id;
+               ethNode[iter].data->md80_Command.command = BUS_FRAME_MD80_GENERIC_FRAME;
+               ethNode[iter].data->md80_Command.size = 2;
+               ethNode[iter].data->md80_Command.counter = ++counterCmd;
+               ethNode[iter].data->md80_Command.dataSet0 = *(uint32_t *)&ethNode[iter].cmd[0];
+               reflexor_sdos_write(&ethNode[iter]);
+               
+               isAllowReq = false;
+            }
+
+            break;
+#endif
          case ETHCATNODE_DEV_SET_ZERO:
             isAllowReq = false;
             if (ethNode[iter].md80Id < ethNode[iter].numMd80)
@@ -1097,6 +1535,7 @@ void cyclic_task()
             break;
 
          case ETHCATNODE_DEV_CONTROL:
+            counter = FREQUENCY / 1000U;
 
             if (ethNode[iter].numMd80 > ethNode[iter].md80Id)
             {
@@ -1118,80 +1557,108 @@ void cyclic_task()
             }
 
             // read process data
-            printf("EthNode slave %d: MD80 0 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Position) / 100.0f);
-            printf("EthNode slave %d: MD80 0 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Velocity) / 100.0f);
-            printf("EthNode slave %d: MD80 0 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Torque) / 100.0f);
-            printf("EthNode slave %d: MD80 0 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Temperature)) / 100.0f;
-            printf("EthNode slave %d: MD80 0 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Mode));
-            printf("EthNode slave %d: MD80 0 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.enabled));
-            printf("EthNode slave %d: MD80 0 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.counter));
-            printf("EthNode slave %d: MD80 0 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.timestamp));
+            if (EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.counter))
+            {
+               printf("EthNode slave %d: MD80 0 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Position) / 100.0f);
+               printf("EthNode slave %d: MD80 0 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Velocity) / 100.0f);
+               printf("EthNode slave %d: MD80 0 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Torque) / 100.0f);
+               printf("EthNode slave %d: MD80 0 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Temperature)) / 100.0f;
+               printf("EthNode slave %d: MD80 0 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Mode));
+               printf("EthNode slave %d: MD80 0 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.enabled));
+               printf("EthNode slave %d: MD80 0 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.counter));
+               printf("EthNode slave %d: MD80 0 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.timestamp));
+            }
 
             // read process data
-            printf("EthNode slave %d: MD80 1 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Position) / 100.0f);
-            printf("EthNode slave %d: MD80 1 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Velocity) / 100.0f);
-            printf("EthNode slave %d: MD80 1 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Torque) / 100.0f);
-            printf("EthNode slave %d: MD80 1 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Temperature)) / 100.0f;
-            printf("EthNode slave %d: MD80 1 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Mode));
-            printf("EthNode slave %d: MD80 1 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.enabled));
-            printf("EthNode slave %d: MD80 1 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.counter));
-            printf("EthNode slave %d: MD80 1 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.timestamp));
+            if (EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.counter))
+            {
+               printf("EthNode slave %d: MD80 1 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Position) / 100.0f);
+               printf("EthNode slave %d: MD80 1 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Velocity) / 100.0f);
+               printf("EthNode slave %d: MD80 1 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Torque) / 100.0f);
+               printf("EthNode slave %d: MD80 1 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Temperature)) / 100.0f;
+               printf("EthNode slave %d: MD80 1 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Mode));
+               printf("EthNode slave %d: MD80 1 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.enabled));
+               printf("EthNode slave %d: MD80 1 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.counter));
+               printf("EthNode slave %d: MD80 1 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.timestamp));
+            }
 
             // read process data
-            printf("EthNode slave %d: MD80 2 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Position) / 100.0f);
-            printf("EthNode slave %d: MD80 2 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Velocity) / 100.0f);
-            printf("EthNode slave %d: MD80 2 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Torque) / 100.0f);
-            printf("EthNode slave %d: MD80 2 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Temperature)) / 100.0f;
-            printf("EthNode slave %d: MD80 2 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Mode));
-            printf("EthNode slave %d: MD80 2 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.enabled));
-            printf("EthNode slave %d: MD80 2 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.counter));
-            printf("EthNode slave %d: MD80 2 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.timestamp));
+            if (EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.counter))
+            {
+               printf("EthNode slave %d: MD80 2 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Position) / 100.0f);
+               printf("EthNode slave %d: MD80 2 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Velocity) / 100.0f);
+               printf("EthNode slave %d: MD80 2 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Torque) / 100.0f);
+               printf("EthNode slave %d: MD80 2 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Temperature)) / 100.0f;
+               printf("EthNode slave %d: MD80 2 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Mode));
+               printf("EthNode slave %d: MD80 2 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.enabled));
+               printf("EthNode slave %d: MD80 2 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.counter));
+               printf("EthNode slave %d: MD80 2 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.timestamp));
+            }
 
             // read process data
-            printf("EthNode slave %d: MD80 3 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Position) / 100.0f);
-            printf("EthNode slave %d: MD80 3 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Velocity) / 100.0f);
-            printf("EthNode slave %d: MD80 3 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Torque) / 100.0f);
-            printf("EthNode slave %d: MD80 3 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Temperature)) / 100.0f;
-            printf("EthNode slave %d: MD80 3 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Mode));
-            printf("EthNode slave %d: MD80 3 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.enabled));
-            printf("EthNode slave %d: MD80 3 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.counter));
-            printf("EthNode slave %d: MD80 3 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.timestamp));
+            if (EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.counter))
+            {
+               printf("EthNode slave %d: MD80 3 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Position) / 100.0f);
+               printf("EthNode slave %d: MD80 3 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Velocity) / 100.0f);
+               printf("EthNode slave %d: MD80 3 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Torque) / 100.0f);
+               printf("EthNode slave %d: MD80 3 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Temperature)) / 100.0f;
+               printf("EthNode slave %d: MD80 3 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Mode));
+               printf("EthNode slave %d: MD80 3 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.enabled));
+               printf("EthNode slave %d: MD80 3 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.counter));
+               printf("EthNode slave %d: MD80 3 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.timestamp));
+            }
+
             // read process data
-            printf("EthNode slave %d: MD80 4 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Position) / 100.0f);
-            printf("EthNode slave %d: MD80 4 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Velocity) / 100.0f);
-            printf("EthNode slave %d: MD80 4 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Torque) / 100.0f);
-            printf("EthNode slave %d: MD80 4 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Temperature)) / 100.0f;
-            printf("EthNode slave %d: MD80 4 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Mode));
-            printf("EthNode slave %d: MD80 4 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.enabled));
-            printf("EthNode slave %d: MD80 4 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.counter));
-            printf("EthNode slave %d: MD80 4 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.timestamp));
+            if (EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.counter))
+            {
+               printf("EthNode slave %d: MD80 4 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Position) / 100.0f);
+               printf("EthNode slave %d: MD80 4 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Velocity) / 100.0f);
+               printf("EthNode slave %d: MD80 4 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Torque) / 100.0f);
+               printf("EthNode slave %d: MD80 4 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Temperature)) / 100.0f;
+               printf("EthNode slave %d: MD80 4 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Mode));
+               printf("EthNode slave %d: MD80 4 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.enabled));
+               printf("EthNode slave %d: MD80 4 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.counter));
+               printf("EthNode slave %d: MD80 4 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.timestamp));
+            }
+            
             // read process data
-            printf("EthNode slave %d: MD80 5 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Position) / 100.0f);
-            printf("EthNode slave %d: MD80 5 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Velocity) / 100.0f);
-            printf("EthNode slave %d: MD80 5 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Torque) / 100.0f);
-            printf("EthNode slave %d: MD80 5 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Temperature)) / 100.0f;
-            printf("EthNode slave %d: MD80 5 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Mode));
-            printf("EthNode slave %d: MD80 5 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.enabled));
-            printf("EthNode slave %d: MD80 5 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.counter));
-            printf("EthNode slave %d: MD80 5 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.timestamp));
+            if (EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.counter))
+            {
+               printf("EthNode slave %d: MD80 5 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Position) / 100.0f);
+               printf("EthNode slave %d: MD80 5 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Velocity) / 100.0f);
+               printf("EthNode slave %d: MD80 5 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Torque) / 100.0f);
+               printf("EthNode slave %d: MD80 5 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Temperature)) / 100.0f;
+               printf("EthNode slave %d: MD80 5 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Mode));
+               printf("EthNode slave %d: MD80 5 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.enabled));
+               printf("EthNode slave %d: MD80 5 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.counter));
+               printf("EthNode slave %d: MD80 5 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.timestamp));
+            }
+            
             // read process data
-            printf("EthNode slave %d: MD80 6 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Position) / 100.0f);
-            printf("EthNode slave %d: MD80 6 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Velocity) / 100.0f);
-            printf("EthNode slave %d: MD80 6 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Torque) / 100.0f);
-            printf("EthNode slave %d: MD80 6 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Temperature)) / 100.0f;
-            printf("EthNode slave %d: MD80 6 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Mode));
-            printf("EthNode slave %d: MD80 6 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.enabled));
-            printf("EthNode slave %d: MD80 6 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.counter));
-            printf("EthNode slave %d: MD80 6 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.timestamp));
+            if (EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.counter))
+            {
+               printf("EthNode slave %d: MD80 6 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Position) / 100.0f);
+               printf("EthNode slave %d: MD80 6 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Velocity) / 100.0f);
+               printf("EthNode slave %d: MD80 6 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Torque) / 100.0f);
+               printf("EthNode slave %d: MD80 6 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Temperature)) / 100.0f;
+               printf("EthNode slave %d: MD80 6 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Mode));
+               printf("EthNode slave %d: MD80 6 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.enabled));
+               printf("EthNode slave %d: MD80 6 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.counter));
+               printf("EthNode slave %d: MD80 6 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.timestamp));
+            }
+
             // read process data
-            printf("EthNode slave %d: MD80 7 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Position) / 100.0f);
-            printf("EthNode slave %d: MD80 7 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Velocity) / 100.0f);
-            printf("EthNode slave %d: MD80 7 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Torque) / 100.0f);
-            printf("EthNode slave %d: MD80 7 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Temperature)) / 100.0f;
-            printf("EthNode slave %d: MD80 7 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Mode));
-            printf("EthNode slave %d: MD80 7 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.enabled));
-            printf("EthNode slave %d: MD80 7 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.counter));
-            printf("EthNode slave %d: MD80 7 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.timestamp));
+            if (EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.counter))
+            {
+               printf("EthNode slave %d: MD80 7 - Position value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Position) / 100.0f);
+               printf("EthNode slave %d: MD80 7 - Velocity value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Velocity) / 100.0f);
+               printf("EthNode slave %d: MD80 7 - Torque value %f\n", iter, (float)EC_READ_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Torque) / 100.0f);
+               printf("EthNode slave %d: MD80 7 - Temperature value %f\n", iter, (float)EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Temperature)) / 100.0f;
+               printf("EthNode slave %d: MD80 7 - Mode value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Mode));
+               printf("EthNode slave %d: MD80 7 - Enabled value %u\n", iter, EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.enabled));
+               printf("EthNode slave %d: MD80 7 - counter %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.counter));
+               printf("EthNode slave %d: MD80 7 - time (ms) %u\n", iter, EC_READ_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.timestamp));
+            }
 
             if (ethNode[iter].rotationCycle == true)
             {

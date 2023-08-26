@@ -16,6 +16,7 @@
 #include "appTest_canIdle.h"
 #include "cmsis_os.h"
 #include "ethCat_types.h"
+#include "canIdle.h"
 
 /*---------------------------------------------------------------------------------------------------------------------
  *                                                 DEFINES
@@ -121,6 +122,24 @@ void AppTest_CanIdle_MainFunction ()
 
       break;
    
+   case APPTEST_CANIDLE_MD80_SET_BAUDRATE:
+      md80_ConfigMd80Can(&appTest.dev, 
+                         appTest.md80BaudrateSet, 
+                         appTest.newTimeoutMs, 
+                         appTest.isCanTermination);
+      appTest.testCase = APPTEST_CANIDLE_NO;
+      break;
+   
+   case APPTEST_CANIDLE_CONFIGURE_BAUDRATE:
+      canIdle_UpdateCmd(appTest.md80id, BUS_FRAME_CANDLE_CONFIG_BAUDRATE, 1, (uint8_t *)&appTest.md80BaudrateSet);
+      appTest.testCase = APPTEST_CANIDLE_NO;
+      break;
+
+   case APPTEST_CANIDLE_MD80_SAVE:
+      md80_ConfigMd80Save(&appTest.dev);
+      appTest.testCase = APPTEST_CANIDLE_NO;
+      break;
+
    default:
       break;
    }
