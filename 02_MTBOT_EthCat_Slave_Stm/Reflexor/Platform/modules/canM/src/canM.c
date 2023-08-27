@@ -66,10 +66,8 @@ static void canM_pollEvent(tCanM_Module *const module)
 {
    can_iso_tp_link_t_p link = NULL;
    uint32_t currTimeMs = 0u;
-   uint8_t idx = 0u;
+   uint8_t idx = module->input.id;
 
-   for (idx = 0u; idx < CAN_DEV_TOTAL; idx ++)
-   {
       /* Get current time of system. */
       currTimeMs = canM_getCurrentTimeInMillis();
 
@@ -78,7 +76,9 @@ static void canM_pollEvent(tCanM_Module *const module)
 
       /* Polling event of Can TP. */
       iso_can_tp_poll(link, currTimeMs);
-   }
+//   for (idx = 0u; idx < CAN_DEV_TOTAL; idx ++)
+//   {
+//   }
 }
 
 /**
