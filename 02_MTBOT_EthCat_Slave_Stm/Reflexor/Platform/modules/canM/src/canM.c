@@ -66,10 +66,8 @@ static void canM_pollEvent(tCanM_Module *const module)
 {
    can_iso_tp_link_t_p link = NULL;
    uint32_t currTimeMs = 0u;
-   uint8_t idx = 0u;
+   uint8_t idx = module->local.idx;
 
-   for (idx = 0u; idx < CAN_DEV_TOTAL; idx ++)
-   {
       /* Get current time of system. */
       currTimeMs = canM_getCurrentTimeInMillis();
 
@@ -78,7 +76,6 @@ static void canM_pollEvent(tCanM_Module *const module)
 
       /* Polling event of Can TP. */
       iso_can_tp_poll(link, currTimeMs);
-   }
 }
 
 /**
@@ -146,8 +143,8 @@ static int canM_FDCanSend (can_iso_tp_link_t_p link, const struct CAN_msg *msg)
    txHeader.Identifier = msg->id.id;
    txHeader.IdType = (true == msg->id.isExt) ? FDCAN_EXTENDED_ID : FDCAN_STANDARD_ID;
    txHeader.DataLength = (FDCAN_DLC_BYTES_0 | ((uint32_t)CANM_DLC_OFF(msg->dlc)));
-   txHeader.FDFormat = (true == msg->id.isCANFD) ? FDCAN_FD_CAN : FDCAN_CLASSIC_CAN;
-   txHeader.BitRateSwitch = FDCAN_BRS_OFF;
+   txHeader.FDFormat = FDCAN_FD_CAN;
+   txHeader.BitRateSwitch = FDCAN_BRS_ON;
    txHeader.TxFrameType = (true == msg->id.isRemote) ? FDCAN_REMOTE_FRAME : FDCAN_DATA_FRAME;
    txHeader.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
 
@@ -406,8 +403,15 @@ bool canM_SetNewBaudrate (uint8_t newBaudrateMbps)
 
          /* Stop CanM module. */
          canM_Stop();
-
+         newBaudrateMbps = newBaudrateMbps - 1;
          /* Update bit timing for the corresponding baudrate. */
+         pModule->config.phfdcan->Instance = FDCAN1;
+         pModule->config.phfdcan->Init.ClockDivider = FDCAN_CLOCK_DIV1;
+         pModule->config.phfdcan->Init.FrameFormat = FDCAN_FRAME_FD_BRS;
+         pModule->config.phfdcan->Init.Mode = FDCAN_MODE_NORMAL;
+         pModule->config.phfdcan->Init.AutoRetransmission = DISABLE;
+         pModule->config.phfdcan->Init.TransmitPause = DISABLE;
+         pModule->config.phfdcan->Init.ProtocolException = DISABLE;
          pModule->config.phfdcan->Init.NominalPrescaler = pBusTiming[newBaudrateMbps].nominal.prescaler;
          pModule->config.phfdcan->Init.NominalSyncJumpWidth = pBusTiming[newBaudrateMbps].nominal.syncJumpWidth;
          pModule->config.phfdcan->Init.NominalTimeSeg1 = pBusTiming[newBaudrateMbps].nominal.timeSeq1;
@@ -416,11 +420,24 @@ bool canM_SetNewBaudrate (uint8_t newBaudrateMbps)
          pModule->config.phfdcan->Init.DataSyncJumpWidth = pBusTiming[newBaudrateMbps].data.syncJumpWidth;
          pModule->config.phfdcan->Init.DataTimeSeg1 = pBusTiming[newBaudrateMbps].data.timeSeq1;
          pModule->config.phfdcan->Init.DataTimeSeg2 = pBusTiming[newBaudrateMbps].data.timeSeq2;
-         
+         pModule->config.phfdcan->Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
+
          /* Initialize the module of FDCAN with new baudrate. */
          if (HAL_OK != HAL_FDCAN_Init(pModule->config.phfdcan))
          {
             ret = false;
+         }
+
+         /* Configure and enable Tx Delay Compensation, required for BRS mode.
+            TdcOffset default recommended value: DataTimeSeg1 * DataPrescaler
+            TdcFilter default recommended value: 0 */
+         if (HAL_FDCAN_ConfigTxDelayCompensation(pModule->config.phfdcan, (pBusTiming[newBaudrateMbps].data.timeSeq1 * pBusTiming[newBaudrateMbps].data.prescaler), 0) != HAL_OK)
+         {
+           Error_Handler();
+         }
+         if (HAL_FDCAN_EnableTxDelayCompensation(pModule->config.phfdcan) != HAL_OK)
+         {
+           Error_Handler();
          }
 
          /* Start CanM module. */

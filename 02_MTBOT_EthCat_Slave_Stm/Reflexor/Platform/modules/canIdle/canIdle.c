@@ -603,8 +603,6 @@ static void canIdle_ConfigBaudrate (tCanIdle_Data * const app)
 
    /* Get baudrate. */
    newBaudrate = app->cmd.data[0];
-
-   app->rsp.frId = app->cmd.frId;
    
    /* Configure new baudrate. */
    if (true == canM_SetNewBaudrate(newBaudrate))
@@ -804,7 +802,7 @@ void canIdle_UpdateCmd (uint8_t md80id, uint8_t command, uint8_t size, uint8_t *
 void canIdle_Init()
 {
    /* Configuration the baudrate of CAN to 1M. */
-   canM_SetNewBaudrate(CAN_BAUD_1M);
+   canM_SetNewBaudrate(CAN_BAUD_8M);
 }
 
 void canIdle_Deinit()

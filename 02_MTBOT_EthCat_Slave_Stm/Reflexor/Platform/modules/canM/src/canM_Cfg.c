@@ -25,7 +25,7 @@ const tCanM_BusTimingParams canM_BusTimingParams[CANM_TOTAL_BAUDRATE_SUPPORT] =
    /* Baudrate: 1Mpbs. */
    {
       .nominal = {4, 8, 31, 8},
-      .data = {4, 10, 29, 10},
+      .data = {4, 8, 31, 8},
    },
    /* Baudrate: 2Mpbs. */
    {
@@ -63,7 +63,7 @@ const tCanM_BusTimingParams canM_BusTimingParams[CANM_TOTAL_BAUDRATE_SUPPORT] =
    /* Baudrate: 8Mpbs. */
    {
       .nominal = {4, 8, 31, 8},
-      .data = {1, 4, 15, 4},
+      .data = {1, 9, 10, 9},
    }
 };
 

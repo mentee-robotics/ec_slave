@@ -1679,7 +1679,7 @@ void cyclic_task()
             }
 
             // write process data
-            if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Error))
+            // if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataReturn.Error))
             {
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataControl.Mode, 4);
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataControl.enable, 1);
@@ -1687,12 +1687,9 @@ void cyclic_task()
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataControl.Velocity, 1000);
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataControl.Torque, 1000);
             }
-            else
-            {
-               EC_WRITE_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_0_DataControl.Mode, 0);
-            }
+
             // write process data
-            if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Error))
+            // if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataReturn.Error))
             {
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataControl.Mode, 4);
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataControl.enable, 1);
@@ -1700,13 +1697,9 @@ void cyclic_task()
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataControl.Velocity, 400);
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataControl.Torque, 100);
             }
-            else
-            {
-               EC_WRITE_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_1_DataControl.Mode, 0);
-            }
 
             // write process data
-            if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Error))
+            // if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataReturn.Error))
             {
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataControl.Mode, 4);
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataControl.enable, 1);
@@ -1714,13 +1707,9 @@ void cyclic_task()
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataControl.Velocity, 400);
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataControl.Torque, 100);
             }
-            else
-            {
-               EC_WRITE_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_2_DataControl.Mode, 0);
-            }
 
             // write process data
-            if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Error))
+            // if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataReturn.Error))
             {
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataControl.Mode, 4);
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataControl.enable, 1);
@@ -1728,13 +1717,8 @@ void cyclic_task()
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataControl.Velocity, 400);
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataControl.Torque, 100);
             }
-            else
-            {
-               EC_WRITE_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_3_DataControl.Mode, 0);
-            }
-            break;
 
-            if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Error))
+            // if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataReturn.Error))
             {
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataControl.Mode, 4);
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataControl.enable, 1);
@@ -1742,13 +1726,8 @@ void cyclic_task()
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataControl.Velocity, 400);
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataControl.Torque, 100);
             }
-            else
-            {
-               EC_WRITE_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_4_DataControl.Mode, 0);
-            }
-            break;
 
-            if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Error))
+            // if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataReturn.Error))
             {
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataControl.Mode, 4);
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataControl.enable, 1);
@@ -1756,13 +1735,8 @@ void cyclic_task()
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataControl.Velocity, 400);
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataControl.Torque, 100);
             }
-            else
-            {
-               EC_WRITE_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_5_DataControl.Mode, 0);
-            }
-            break;
 
-            if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Error))
+            // if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataReturn.Error))
             {
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataControl.Mode, 4);
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataControl.enable, 1);
@@ -1770,13 +1744,8 @@ void cyclic_task()
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataControl.Velocity, 400);
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataControl.Torque, 100);
             }
-            else
-            {
-               EC_WRITE_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_6_DataControl.Mode, 0);
-            }
-            break;
 
-            if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Error))
+            // if (0u == EC_READ_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataReturn.Error))
             {
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataControl.Mode, 4);
                EC_WRITE_U8(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataControl.enable, 1);
@@ -1784,10 +1753,7 @@ void cyclic_task()
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataControl.Velocity, 400);
                EC_WRITE_U16(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataControl.Torque, 100);
             }
-            else
-            {
-               EC_WRITE_U32(ethNode[iter].domain_pd + ethNode[iter].data->md80_7_DataControl.Mode, 0);
-            }
+
             break;
 
          default:
