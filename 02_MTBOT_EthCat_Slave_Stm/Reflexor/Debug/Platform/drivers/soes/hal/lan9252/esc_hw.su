@@ -1,0 +1,10 @@
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:58:13:ESC_read_pram	296	static
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:25:13:ESC_read_csr	24	static
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:42:13:ESC_write_csr	24	static
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:154:13:ESC_write_pram	304	static
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:255:6:ESC_read	24	static
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:310:6:ESC_write	24	static
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:362:6:ESC_reset	0	static
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:367:6:ESC_init	8	static
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:421:6:ESC_interrupt_enable	8	static
+../Platform/drivers/soes/hal/lan9252/esc_hw.c:439:6:ESC_interrupt_disable	8	static

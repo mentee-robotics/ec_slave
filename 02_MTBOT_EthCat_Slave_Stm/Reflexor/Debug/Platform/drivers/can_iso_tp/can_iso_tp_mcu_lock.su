@@ -1,0 +1,3 @@
+../Platform/drivers/can_iso_tp/can_iso_tp_mcu_lock.c:4:6:mcu_lock_init	0	static
+../Platform/drivers/can_iso_tp/can_iso_tp_mcu_lock.c:9:14:mcu_lock_try_lock	16	static
+../Platform/drivers/can_iso_tp/can_iso_tp_mcu_lock.c:26:6:mcu_lock_unlock	0	static

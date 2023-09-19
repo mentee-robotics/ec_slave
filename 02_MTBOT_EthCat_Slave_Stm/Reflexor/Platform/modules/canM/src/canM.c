@@ -153,7 +153,7 @@ static int canM_FDCanSend (can_iso_tp_link_t_p link, const struct CAN_msg *msg)
 
    if (HAL_OK == HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &txHeader, (uint8_t *)msg->data))
    {
-      printf("CAN msg with id 0x%x dlc 0x%d: \n", msg->id.id, msg->dlc);
+
 
       if (NULL != link->init_info.print_debug)
       {
@@ -295,7 +295,12 @@ static tCanM_State canM_Process (tCanM_Module *const module)
          /* Reset flag. */
          module->local.isRecMsg = false;
       }
+      //TODO: important - might be cause of delay Ziv
+//      else{
+//    	  cdc_printf("module->local.isRecMsg id:%d is false\r\n", idx);
+//      }
    }
+
 
    return (nextState);
 }
@@ -660,12 +665,39 @@ void canM_Init (tCanM_Module *const module)
  * 
  * @param module The parameter "module" is a pointer to a structure of type "tCanM_Module". This structure likely contains various variables and data related to the CAN module, such as its state, configuration settings, and any received or transmitted messages. The "canM_MainFunction" is a function that is
  */
+
+
+const char* tCanM_State_StatesName (tCanM_State state){
+	const char* ret = "";
+	switch (state){
+	case(CANM_IDLE):
+		ret = "IDLE";
+		break;
+	case(CANM_PROCESS_ENTRY):
+			ret = "Process_ENTER";
+			break;
+	case(CANM_PROCESS):
+			ret = "Process";
+			break;
+	case(CANM_PROCESS_POST):
+			ret = "Process_POST";
+			break;
+	default:
+		ret = "Unknown";
+	}
+	return ret;
+}
+
+
 void canM_MainFunction(tCanM_Module *const module)
 {
    tCanM_State nextState = module->local.state;
 
    canM_pollEvent(module);
 
+   //cdc_printf("@%d: canM stage: %d\r\n",HAL_GetTick(), module->local.state);
+   //cdc_printf("@%d: canM stage: %d\r\n",osKernelSysTick(), module->local.state);
+   //if (nextState!= CANM_IDLE) cdc_printf("[can2Master]@%u:\t %s\n",GetCycleCount(), tCanM_State_StatesName(nextState));
    switch (module->local.state)
    {
    case CANM_IDLE:
@@ -704,8 +736,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
    FDCAN_RxHeaderTypeDef rxHeader = {0u};
    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
-   if (FDCAN_IT_RX_FIFO0_NEW_MESSAGE == (RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE))
-   {
+   if (FDCAN_IT_RX_FIFO0_NEW_MESSAGE == (RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE))   {
       /* Enter critical section. */
       taskENTER_CRITICAL_FROM_ISR();
 
@@ -725,5 +756,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 
       /* Exit critical section. */
       taskEXIT_CRITICAL_FROM_ISR(xHigherPriorityTaskWoken);
+      if(0) cdc_printf("HAL_FDCAN_RxFifo0Callback @%u\r\n", GetCycleCount());
    }
+   return;
 }

@@ -67,9 +67,9 @@ uint32_t ethCat_object_download_hook ( uint16_t index,
       if ((cmd != BUS_FRAME_NONE) && (cmd < BUS_FRAME_INVALID) && (subindex == 9))
       {
          /* Copy command.*/
-         memcpy(&dataCmd[0], (uint8_t *)&Obj.md80_Command.dataSet0, sizeof(Obj.md80_Command.dataSet0));
-         memcpy(&dataCmd[4], (uint8_t *)&Obj.md80_Command.dataSet1, sizeof(Obj.md80_Command.dataSet1));
-         memcpy(&dataCmd[8], (uint8_t *)&Obj.md80_Command.dataSet2, sizeof(Obj.md80_Command.dataSet2));
+         memcpy(&dataCmd[0],  (uint8_t *)&Obj.md80_Command.dataSet0, sizeof(Obj.md80_Command.dataSet0));
+         memcpy(&dataCmd[4],  (uint8_t *)&Obj.md80_Command.dataSet1, sizeof(Obj.md80_Command.dataSet1));
+         memcpy(&dataCmd[8],  (uint8_t *)&Obj.md80_Command.dataSet2, sizeof(Obj.md80_Command.dataSet2));
          memcpy(&dataCmd[12], (uint8_t *)&Obj.md80_Command.dataSet3, sizeof(Obj.md80_Command.dataSet3));
          memcpy(&dataCmd[16], (uint8_t *)&Obj.md80_Command.dataSet4, sizeof(Obj.md80_Command.dataSet4));
 
@@ -81,12 +81,12 @@ uint32_t ethCat_object_download_hook ( uint16_t index,
          /* Reset command. */
          Obj.md80_Command.command = BUS_FRAME_NONE;
 
-         /* Print log via serial. */
-         printf("New Command: %d\n", cmd);
-         printf("Md80 id: %d\n", md80id);
-         printf("counter: %d", (int)Obj.md80_Command.counter);
-         printf(" at Time: %d\n", (int)Obj.md80_Last_Command_Received.timestamp);
-         printf("DataCmd received: \n");
+         /* Print log via serial.
+         cdc_printf("New Command: %d\n", cmd);
+         cdc_printf("Md80 id: %d\n", md80id);
+         cdc_printf("counter: %d", (int)Obj.md80_Command.counter);
+         cdc_printf(" at Time: %d\n", (int)Obj.md80_Last_Command_Received.timestamp);
+         cdc_printf("DataCmd received: \n");*/
          for (int i = 0; i < sizeof(dataCmd); i++)
          {
             printf("%02X", dataCmd[i]);
@@ -155,7 +155,13 @@ void ethCat_Init (void)
 
 void ethCat_MainFunction (void)
 {
-   ecat_slv();
+	uint32_t start=0;
+	uint32_t end =0;
+	start = GetCycleCount();
+
+	ecat_slv();
+	end= GetCycleCount();
+	if(false) cdc_printf("ecat_slv took: %d\r\n",end-start);
 }
 
 void timerCounterCb(void const * argument)

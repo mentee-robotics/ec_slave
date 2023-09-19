@@ -1,0 +1,3 @@
+../appsTest/appTest.c:32:6:AppTest_Init	0	static
+../appsTest/appTest.c:47:6:AppTest_MainFunction	8	static
+../appsTest/appTest.c:62:6:testTask	8	static

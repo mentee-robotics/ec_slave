@@ -1,0 +1,12 @@
+../Platform/drivers/lan9252/lan9252.c:4:13:lan9252_cmd_read	16	static
+../Platform/drivers/lan9252/lan9252.c:18:13:lan9252_cmd_write	16	static
+../Platform/drivers/lan9252/lan9252.c:31:6:lan9252_Init	8	static
+../Platform/drivers/lan9252/lan9252.c:41:6:lan9252_Deinit	8	static
+../Platform/drivers/lan9252/lan9252.c:46:6:lan9252_read_data	152	static
+../Platform/drivers/lan9252/lan9252.c:70:9:lan9252_read_8	16	static
+../Platform/drivers/lan9252/lan9252.c:79:10:lan9252_read_16	16	static
+../Platform/drivers/lan9252/lan9252.c:91:10:lan9252_read_32	16	static
+../Platform/drivers/lan9252/lan9252.c:106:6:lan9252_write_data	24	static
+../Platform/drivers/lan9252/lan9252.c:121:6:lan9252_write_8	16	static
+../Platform/drivers/lan9252/lan9252.c:126:6:lan9252_write_16	16	static
+../Platform/drivers/lan9252/lan9252.c:136:6:lan9252_write_32	16	static

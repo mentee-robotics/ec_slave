@@ -58,6 +58,7 @@ static void canIdle_ScanDevice(tCanIdle_Data *const app)
          {
             if (true == canM_ReadAddr((uint32_t *)&md80Addr[md80num], (uint8_t *)dataResp, (uint8_t *)&dataSize))
             {
+		 cdc_printf("@%u\t[scan adder] addr: %d id %d\n",xTaskGetTickCount()/portTICK_PERIOD_MS, addr,md80Addr[md80num] );
                md80num++;
                break;
             }
@@ -91,6 +92,7 @@ static void canIdle_Begin(tCanIdle_Data *const app)
 {
    if (app->workState == CANIDLE_STOP)
    {
+	  //cdc_printf("[Command]@%u:\t inputs: %d %d\r\n",GetCycleCount(),app->cmd.frId, app->cmd.motorId)
       app->workState = CANIDLE_RUN;
    }
 }
@@ -152,6 +154,56 @@ static void canIdle_Reset (tCanIdle_Data * const app)
    taskEXIT_CRITICAL();
 }
 
+
+const char* frameTypeName(tMd80_FrameId idType){
+	switch (idType){
+		case(MD80_FRAME_FLASH_LED):
+				return "FLASH_LED";
+		case(MD80_FRAME_MOTOR_ENABLE):
+				return "MOTOR_ENABLE";
+		case(MD80_FRAME_CONTROL_SELECT):
+				return "CONTROL_SELECT";
+		case(MD80_FRAME_ZERO_ENCODER ):
+				return "ZERO_ENCODER";
+		case(MD80_FRAME_BASE_CONFIG ):
+				return "BASE_CONFIG";
+		case(MD80_FRAME_GET_INFO ):
+				return "GET_INFO";
+		case(MD80_FRAME_SET_TORQUE_BANDWIDTH ):
+				return "SET_TORQUE_BW";
+		case(MD80_FRAME_POS_CONTROL ):
+				return "POS_CONTROL";
+		case(MD80_FRAME_VEL_CONTROL ):
+				return "VEL_CONTROL";
+		case(MD80_FRAME_IMP_CONTROL ):
+				return "IMP_CONTROL";
+		case(MD80_FRAME_RESTART ):
+				return "RESTART";
+		case(MD80_FRAME_SET_MOTION_TARGETS ):
+				return "SET_MOTION_TARGETS";
+		case(MD80_FRAME_CAN_CONFIG ):
+				return "CAN_CONFIG";
+		case(MD80_FRAME_CAN_SAVE ):
+				return "CAN_SAVE";
+		case(MD80_FRAME_WRITE_REGISTER ):
+				return "WRITE_REGISTER";
+		case(MD80_FRAME_READ_REGISTER ):
+				return "READ_REGISTER";
+		case(MD80_FRAME_DIAGNOSTIC ):
+				return "DIAGNOSTIC";
+		case(MD80_FRAME_CALIBRATION ):
+				return "CALIBRATION";
+		case(MD80_FRAME_CALIBRATION_OUTPUT ):
+				return "CALIBRATION_OUTPUT";
+		case(MD80_RESPONSE_DEFAULT ):
+				return "RESPONSE_DEFAULT";
+		default:
+			return "Unknown command";
+	}
+}
+
+
+
 static void canIdle_GenericFrame(tCanIdle_Data *const app)
 {
    uint8_t cmd;
@@ -179,6 +231,10 @@ static void canIdle_GenericFrame(tCanIdle_Data *const app)
    pMd80dev = (tMd80_Device *)&md80Dev[md80Id];
 
    /* Base on command. */
+
+   cdc_printf("@%u\t[Bring up Motor Command]:\t %s for %d\r\n",xTaskGetTickCount()/portTICK_PERIOD_MS,frameTypeName((tMd80_FrameId) cmd) ,md80Id);
+		   //cdc_printf("[Bring up Motor Command]@%u:\t %s for %d\r\n",GetCycleCount(),frameTypeName((tMd80_FrameId) cmd) ,md80Id);
+    //cdc_printf("[Bring up Motor Command]@%u:\t %d\r\n",GetCycleCount(),cmd );
    switch (cmd)
    {
    case MD80_FRAME_ZERO_ENCODER:
@@ -204,7 +260,7 @@ static void canIdle_GenericFrame(tCanIdle_Data *const app)
       md80_SetCurrentLimit(pMd80dev, currentLimit);
       break;
 
-   case MD80_FRAME_SET_BANDWIDTH:
+   case MD80_FRAME_SET_TORQUE_BANDWIDTH:
       memcpy((void *)&torqueBandwidth, (void *)&app->cmd.data[1], sizeof(torqueBandwidth));
       md80_SetMaxTorque(pMd80dev, torqueBandwidth);
       break;
@@ -316,22 +372,31 @@ static void canIdle_RemoveMd80 (tCanIdle_Data *const app)
    /* FIXME: Update the code for this function.*/
 }
 
+
+#define printInternalMotorCommands
 static void canIdle_UpdateDataControl(void)
 {
    uint8_t md80idx = 0u;
    tMd80_Device *pMd80dev = NULL;
    _Objects * const pEcatObj = (_Objects *)&Obj;
-
+   static uint16_t old_position =0;
    /* Update the data for all motor detected. */
    for (md80idx = 0u; md80idx < canIdle_Module.numMd80Det; md80idx ++)
    {
       /* Get the pointer to data structure of md80. */
       pMd80dev = (tMd80_Device *)&md80Dev[md80idx];
 
+
       /* Determine whether this md80 was enabled successfully. */
       if (true == pMd80dev->local.isEnabled)
       {
          /* Update the pointer to data control corresponding with md80. */
+#ifdef printInternalMotorCommands
+    	  if(old_position != pEcatObj->md80_0_DataControl.Position ){
+      cdc_printf("@%u\t[Motor packet]:\tid:%d\tpos:%d\r\n", GetCycleCount(),md80idx,pEcatObj->md80_0_DataControl.Position  );
+      old_position = pEcatObj->md80_0_DataControl.Position;
+    	  }
+#endif
          switch (md80idx)
          {
          case 0:
@@ -617,10 +682,45 @@ static void canIdle_ConfigBaudrate (tCanIdle_Data * const app)
    }
 }
 
+
+const char* busFrameName(tMd80_BusFrameId state){
+	switch (state){
+		case(BUS_FRAME_NONE):
+				return "B_F_NONE";
+		case(BUS_FRAME_PING_START):
+				return "PING_START";
+		case(BUS_FRAME_CANDLE_CONFIG_BAUDRATE):
+				return "CANDLE_CFG_BR";
+		case(BUS_FRAME_MD80_ADD ):
+				return "MD80_ADD";
+		case(BUS_FRAME_MD80_GENERIC_FRAME ):
+				return "GENERIC_FRAME";
+		case(BUS_FRAME_MD80_CONFIG_CAN ):
+				return "CONFIG_CAN";
+		case(BUS_FRAME_BEGIN ):
+				return "B_F_BEGIN";
+		case(BUS_FRAME_END ):
+				return "B_F_END";
+		case(BUS_FRAME_UPDATE ):
+				return "B_F_UPDATE";
+		case(BUS_FRAME_RESET ):
+				return "B_F_RESET";
+		case(BUS_FRAME_INVALID ):
+				return "B_F_INVALID";
+
+		default:
+			return "Unknown command";
+	}
+}
+
+
+
 static tCanIdle_States canIdle_Command(tCanIdle_Data *const app)
 {
    tCanIdle_States nextState = CANIDLE_COMMAND;
 
+   //cdc_printf("[canIdle_Command]@%u:\t %s\ for %d\r\n",GetCycleCount(),busFrameName(app->hostReq.frId),app->cmd.motorId );
+   cdc_printf("@%u\t[canIdle]:\tH:%s for %d\r\n",xTaskGetTickCount()/portTICK_PERIOD_MS,busFrameName(app->hostReq.frId), app->cmd.motorId );
    switch (app->hostReq.frId)
    {
    case BUS_FRAME_NONE:
@@ -659,6 +759,7 @@ static tCanIdle_States canIdle_Command(tCanIdle_Data *const app)
       break;
 
    default:
+      cdc_printf("[canIdle_Command]@%u:\t unhandled command %s\r\n",GetCycleCount(),busFrameName(nextState) );
       break;
    }
 
@@ -707,6 +808,38 @@ static void canIdle_Control(tCanIdle_Data * const app)
       /* Run the main function. */
       md80_MainFunction(pMd80dev);
    }
+}
+
+
+const char* busFrameTypeName(tMd80_BusFrameId type){
+	switch(type){
+
+	case(BUS_FRAME_NONE ):
+		return "NONE";
+	case(BUS_FRAME_PING_START ):
+		return "PING_START";
+	case(BUS_FRAME_CANDLE_CONFIG_BAUDRATE ):
+		return "CANDLE_CONF_BAUDRATE";
+	case(BUS_FRAME_MD80_ADD ):
+		return "MD80_ADD";
+	case(BUS_FRAME_MD80_GENERIC_FRAME ):
+		return "MD80_GENERIC_FRAME";
+	case(BUS_FRAME_MD80_CONFIG_CAN ):
+		return "MD80_CONFIG_CAN";
+	case(BUS_FRAME_BEGIN ):
+		return "BEGIN";
+	case(BUS_FRAME_END ):
+		return "END";
+	case(BUS_FRAME_UPDATE ):
+		return "UPDATE";
+	case(BUS_FRAME_RESET ):
+		return "RESET";
+	case(BUS_FRAME_INVALID):
+		return "INVALID";
+	default:
+		return "Unknown";
+	}
+
 }
 
 static void canIdle_UpdateResp (tCanIdle_Data * const app)
@@ -763,6 +896,8 @@ static void canIdle_UpdateResp (tCanIdle_Data * const app)
    Obj.md80_Respond.command = app->rsp.frId;
    Obj.md80_Respond.size = app->rsp.size;
    Obj.md80_Respond.timestamp = xTaskGetTickCount()/portTICK_PERIOD_MS;
+   //cdc_printf("response@%u: %d\r\n", GetCycleCount(), Obj.md80_Respond.command);
+   cdc_printf("@%u\t[canM response]:\t%s\r\n", Obj.md80_Respond.timestamp, busFrameTypeName(Obj.md80_Respond.command));
    memcpy((void *)&Obj.md80_Respond.dataRet0, (void *)&app->rsp.data[0], 4);
    memcpy((void *)&Obj.md80_Respond.dataRet1, (void *)&app->rsp.data[4], 4);
    memcpy((void *)&Obj.md80_Respond.dataRet2, (void *)&app->rsp.data[8], 4);
@@ -794,6 +929,7 @@ void canIdle_UpdateCmd (uint8_t md80id, uint8_t command, uint8_t size, uint8_t *
 
       /* Exit critical section. */
       taskEXIT_CRITICAL();
+      cdc_printf("@%u\t[canM command]:\t%s for %d\r\n", Obj.md80_Respond.timestamp, busFrameTypeName(command), md80id);
    }
    else
    {
@@ -812,12 +948,32 @@ void canIdle_Deinit()
 
 }
 
+const char* tCanIdle_StatesName (tCanIdle_States state){
+	const char* ret = "";
+	switch (state){
+	case(CANIDLE_IDLE):
+		ret = "IDLE";
+		break;
+	case(CANIDLE_COMMAND_ENTER):
+			ret = "COMMAND_ENTER";
+			break;
+	case(CANIDLE_COMMAND):
+			ret = "COMMAND";
+			break;
+	case(CANIDLE_COMMAND_EXIT):
+			ret = "COMMAND_EXIT";
+			break;
+	}
+	return ret;
+}
+
 void canIdle_MainFunction()
 {
    tCanIdle_Data * const pCanIdleM = (tCanIdle_Data *)&canIdle_Module;
    tCanIdle_States nextState = pCanIdleM->state;
 
    /* Update data control. */
+   //if(nextState != CANIDLE_IDLE) cdc_printf("[can2motor]@%u:\t %s\n",GetCycleCount(), tCanIdle_StatesName(nextState));
    canIdle_UpdateDataControl();
 
    /* Run mode. */
@@ -849,6 +1005,7 @@ void canIdle_MainFunction()
 
    if (CANIDLE_RUN == pCanIdleM->workState)
    {
+	  //we switched to running mode and from now on commands will run constantly - position/impedance commands only change the targets.
       canIdle_Control(pCanIdleM);
    }
 }

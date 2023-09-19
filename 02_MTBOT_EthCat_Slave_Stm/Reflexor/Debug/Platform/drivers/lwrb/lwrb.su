@@ -1,0 +1,16 @@
+../Platform/drivers/lwrb/lwrb.c:65:1:lwrb_init	0	static
+../Platform/drivers/lwrb/lwrb.c:91:1:lwrb_is_ready	0	static
+../Platform/drivers/lwrb/lwrb.c:102:6:lwrb_free	0	static
+../Platform/drivers/lwrb/lwrb.c:115:6:lwrb_set_evt_fn	0	static
+../Platform/drivers/lwrb/lwrb.c:287:1:lwrb_get_free	0	static
+../Platform/drivers/lwrb/lwrb.c:135:1:lwrb_write	24	static
+../Platform/drivers/lwrb/lwrb.c:322:1:lwrb_get_full	0	static
+../Platform/drivers/lwrb/lwrb.c:185:1:lwrb_read	24	static
+../Platform/drivers/lwrb/lwrb.c:234:1:lwrb_peek	24	static
+../Platform/drivers/lwrb/lwrb.c:353:6:lwrb_reset	8	static
+../Platform/drivers/lwrb/lwrb.c:369:1:lwrb_get_linear_block_read_address	0	static
+../Platform/drivers/lwrb/lwrb.c:384:1:lwrb_get_linear_block_read_length	0	static
+../Platform/drivers/lwrb/lwrb.c:421:1:lwrb_skip	16	static
+../Platform/drivers/lwrb/lwrb.c:447:1:lwrb_get_linear_block_write_address	0	static
+../Platform/drivers/lwrb/lwrb.c:462:1:lwrb_get_linear_block_write_length	0	static
+../Platform/drivers/lwrb/lwrb.c:510:1:lwrb_advance	16	static

@@ -36,6 +36,10 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
+//#include "usbd_cdc_if.h"
+#include "usb_device.h"
+#include "../USB_Device/App/usbd_cdc_if.h"
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -157,7 +161,7 @@ void MX_FREERTOS_Init(void) {
   appTestHandle = osThreadCreate(osThread(appTest), NULL);
 
   /* definition and creation of ethCat */
-  osThreadDef(ethCat, ethCatTask, osPriorityHigh, 0, 1024);
+  osThreadDef(ethCat, ethCatTask, osPriorityRealtime, 0, 1024);
   ethCatHandle = osThreadCreate(osThread(ethCat), NULL);
 
   /* definition and creation of canM */
@@ -165,7 +169,7 @@ void MX_FREERTOS_Init(void) {
   canMHandle = osThreadCreate(osThread(canM), NULL);
 
   /* definition and creation of canIdle */
-  osThreadDef(canIdle, canIdleTask, osPriorityHigh, 0, 512);
+  osThreadDef(canIdle, canIdleTask, osPriorityAboveNormal, 0, 512);
   canIdleHandle = osThreadCreate(osThread(canIdle), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -208,7 +212,7 @@ void ethCatTask(void const * argument)
   /* USER CODE BEGIN ethCatTask */
   /* Initialize the modules which used by this application. */
   ethCat_Init();
-
+  HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, GPIO_PIN_SET);
   /* Infinite loop */
   for(;;)
   {
@@ -227,10 +231,61 @@ void ethCatTask(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_canMTask */
+
+//#define ZplayingWithCDC
+#ifdef ZplayingWithCDC
+
+
+/* Ziv testing usb printf 29AUG23
+int _write(int file, char *ptr, int len)
+{
+	//USBD_HandleTypeDef hUsbDeviceFS;
+    // Check if USB CDC is initialized
+    if (hUsbDeviceFS.dev_state != USBD_STATE_CONFIGURED)
+    {
+        return -1; // Return an error if USB CDC is not configured
+    }
+
+    // Transmit data over USB CDC
+    CDC_Transmit_FS((uint8_t*)ptr, len);
+
+    return len;
+}
+*/
+/*   End Of testing */
+
+
+
+
+USBD_CDC_HandleTypeDef hcdc;
 void canMTask(void const * argument)
 {
   /* USER CODE BEGIN canMTask */
   canM_Init (&canM_Module);
+
+  uint8_t buffer[64] = "Testing printer\r\n";
+  uint8_t buffer2[64] = "got some data\r\n";
+  uint8_t buffer3[20] = "Got something\r\n";
+  bool led =false;
+  uint32_t num =0;
+while(1){
+  if ( (hcdc.RxState != 0) || (dataReceivedFlag == 1)){
+	  uint32_t len = hcdc.RxLength;
+	  CDC_Receive_FS(buffer2, &len);
+	  dataReceivedFlag = 0;
+	  CDC_Transmit_FS(buffer3, strlen((const char* )buffer3));
+	  HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, 0);
+	  //while(1);
+  }
+
+  	  cdc_printf("%s: run %d, buffer2 holds: %s\r\n","Testing printer", num++,buffer2);
+	  CDC_Transmit_FS(buffer, strlen((const char* )buffer));
+	  osDelay(500);
+	  HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, led);
+	  led = !led;
+  //}
+}
+
 
   /* Infinite loop */
   for(;;)
@@ -242,6 +297,31 @@ void canMTask(void const * argument)
   }
   /* USER CODE END canMTask */
 }
+
+#else
+void canMTask(void const * argument)
+{
+  /* USER CODE BEGIN canMTask */
+  canM_Init (&canM_Module);
+
+  /* Infinite loop */
+  for(;;)
+  {
+
+    /* Run main function of canM. */
+    canM_MainFunction (&canM_Module);
+    //vTaskDelay(160);
+    osDelay(1);
+  }
+  /* USER CODE END canMTask */
+}
+
+#endif
+
+
+
+
+
 
 /* USER CODE BEGIN Header_canIdleTask */
 /**

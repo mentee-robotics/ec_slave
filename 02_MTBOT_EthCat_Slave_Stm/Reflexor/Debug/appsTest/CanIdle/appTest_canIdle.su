@@ -1,0 +1,2 @@
+../appsTest/CanIdle/appTest_canIdle.c:43:6:AppTest_CanIdle_Init	0	static
+../appsTest/CanIdle/appTest_canIdle.c:48:6:AppTest_CanIdle_MainFunction	40	static

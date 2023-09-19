@@ -145,6 +145,7 @@ void APP_safeoutput (void)
  */
 void TXPDO_update (void)
 {
+	//TODO TOUCH HERE
    if(ESCvar.txpdo_override != NULL)
    {
       (ESCvar.txpdo_override)();
@@ -295,6 +296,12 @@ void ecat_slv_worker (uint32_t event_mask)
    ESC_ALeventmaskwrite(ESC_ALeventmaskread() | event_mask);
 }
 
+
+uint32_t read_local_time(){
+	ESC_read (ESCREG_LOCALTIME, (void *) &ESCvar.Time, sizeof (ESCvar.Time));
+	return etohl (ESCvar.Time);
+}
+
 /*
  * Polling function. It should be called periodically for an application 
  * when only SM2/DC interrupt is active.
@@ -302,18 +309,22 @@ void ecat_slv_worker (uint32_t event_mask)
  */
 void ecat_slv_poll (void)
 {
+
    /* Read local time from ESC*/
+
    ESC_read (ESCREG_LOCALTIME, (void *) &ESCvar.Time, sizeof (ESCvar.Time));
    ESCvar.Time = etohl (ESCvar.Time);
 
    /* Check the state machine */
    ESC_state();
+
    /* Check the SM activation event */
    ESC_sm_act_event();
 
    /* Check mailboxes */
    if (ESC_mbxprocess())
    {
+	  //cdc_printf("mailbox event@%u\r\n", GetCycleCount());
       ESC_coeprocess();
 #if USE_FOE
       ESC_foeprocess();
@@ -332,6 +343,7 @@ void ecat_slv_poll (void)
    {
       (ESCvar.esc_hw_eep_handler)();
    }
+
 }
 
 /*
@@ -349,7 +361,7 @@ void ecat_slv (void)
  */
 void ecat_slv_init (esc_cfg_t * config)
 {
-   DPRINT ("Slave stack init started\n");
+   DPRINT ("Slave stack init started\n\n");
 
    /* Init watchdog */
    watchdog = config->watchdog_cnt;

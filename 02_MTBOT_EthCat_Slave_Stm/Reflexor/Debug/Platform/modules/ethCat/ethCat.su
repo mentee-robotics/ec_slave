@@ -1,0 +1,8 @@
+../Platform/modules/ethCat/ethCat.c:108:10:ethCat_check_dc_handler	0	static
+../Platform/modules/ethCat/ethCat.c:115:6:ethCat_hw_eep_handler	0	static
+../Platform/modules/ethCat/ethCat.c:50:10:ethCat_object_download_hook	48	static
+../Platform/modules/ethCat/ethCat.c:40:6:cb_get_inputs	0	static
+../Platform/modules/ethCat/ethCat.c:45:6:cb_set_outputs	0	static
+../Platform/modules/ethCat/ethCat.c:120:6:ethCat_Init	8	static
+../Platform/modules/ethCat/ethCat.c:156:6:ethCat_MainFunction	8	static
+../Platform/modules/ethCat/ethCat.c:167:6:timerCounterCb	8	static

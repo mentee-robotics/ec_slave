@@ -120,73 +120,74 @@ static uint8_t md80_getSize(uint16_t regId)
 
 static void md80_UpdateCommandFrame(tMd80_Device *const me)
 {
+	//if (me->local.mode!= MD80_IDLE)cdc_printf("@%u\t[md80]:\t inputs: %d pack? %s\r\n",GetCycleCount(),me->local.mode, me->config.isRegularsAdjust? "True":"False");
    switch (me->local.mode)
-   {
-   case MD80_IDLE:
-      me->local.command.toMd80.length = 2u;
-      me->local.command.toMd80.data[0] = MD80_FRAME_GET_INFO;
-      me->local.command.toMd80.data[1] = 0x00;
-      break;
+	   {
+	   case MD80_IDLE:
+		  me->local.command.toMd80.length = 2u;
+		  me->local.command.toMd80.data[0] = MD80_FRAME_GET_INFO;
+		  me->local.command.toMd80.data[1] = 0x00;
+		  break;
 
-   case MD80_IMPEDANCE:
-      if (true == me->config.isRegularsAdjust)
-      {
-         /* Pack ImpedanceFrame */
-         md80_PackImpedanceFrame(me);
+	   case MD80_IMPEDANCE:
+		  if (true == me->config.isRegularsAdjust)
+		  {
+			 /* Pack ImpedanceFrame */
+			 md80_PackImpedanceFrame(me);
 
-         /* Reset flag. */
-         me->config.isRegularsAdjust = false;
-      }
-      else
-      {
-         /* Pack Motion Target Frame */
-         md80_PackMotionTargetsFrame(me);
-      }
-      break;
+			 /* Reset flag. */
+			 me->config.isRegularsAdjust = false;
+		  }
+		  else
+		  {
+			 /* Pack Motion Target Frame */
+			 md80_PackMotionTargetsFrame(me);
+		  }
+		  break;
 
-   case MD80_POSITION_PID:
-      if (true == me->config.isRegularsAdjust)
-      {
-         /* Pack PositionFrame */
-         md80_PackPositionFrame(me);
+	   case MD80_POSITION_PID:
+		  if (true == me->config.isRegularsAdjust)
+		  {
+			 /* Pack PositionFrame */
+			 md80_PackPositionFrame(me);
 
-         /* Reset flag. */
-         me->config.isRegularsAdjust = false;
-      }
-      else if (true == me->config.isVelocityRegulatorAdjust)
-      {
-         /* Pack velocityRegulator */
-         md80_PackVelocityFrame(me);
+			 /* Reset flag. */
+			 me->config.isRegularsAdjust = false;
+		  }
+		  else if (true == me->config.isVelocityRegulatorAdjust)
+		  {
+			 /* Pack velocityRegulator */
+			 md80_PackVelocityFrame(me);
 
-         /* Reset flag. */
-         me->config.isVelocityRegulatorAdjust = false;
-      }
-      else
-      {
-         /* packMotionTargetsFrame */
-         md80_PackMotionTargetsFrame(me);
-      }
-      break;
+			 /* Reset flag. */
+			 me->config.isVelocityRegulatorAdjust = false;
+		  }
+		  else
+		  {
+			 /* packMotionTargetsFrame */
+			 md80_PackMotionTargetsFrame(me);
+		  }
+		  break;
 
-   case MD80_VELOCITY_PID:
-      if (true == me->config.isVelocityRegulatorAdjust)
-      {
-         /* packVelocityFrame */
-         md80_PackVelocityFrame(me);
+	   case MD80_VELOCITY_PID:
+		  if (true == me->config.isVelocityRegulatorAdjust)
+		  {
+			 /* packVelocityFrame */
+			 md80_PackVelocityFrame(me);
 
-         /* Reset flag. */
-         me->config.isVelocityRegulatorAdjust = false;
-      }
-      else
-      {
-         /* packMotionTargetsFrame */
-         md80_PackMotionTargetsFrame(me);
-      }
-      break;
+			 /* Reset flag. */
+			 me->config.isVelocityRegulatorAdjust = false;
+		  }
+		  else
+		  {
+			 /* packMotionTargetsFrame */
+			 md80_PackMotionTargetsFrame(me);
+		  }
+		  break;
 
-   default:
-      break;
-   }
+	   default:
+		  break;
+	   }
 }
 
 static bool md80_Transmit(tMd80_Device *const me, uint32_t timeout)
@@ -507,6 +508,7 @@ void md80_MainFunction(tMd80_Device *const me)
 {
    if ((true == me->config.isMd80Detected) && (true == me->local.isEnabled))
    {
+
       md80_UpdateCommandFrame(me);
 
       if (true == md80_Transmit(me, 100))
@@ -552,6 +554,7 @@ void md80_SetImpedanceControllerParams(tMd80_Device *const me, float kp, float k
 void md80_SetMaxTorque(tMd80_Device *const me, uint16_t maxTorque)
 {
    /* Send request */
+
    me->config.torqueMax = maxTorque;
    me->config.isTorqueMaxAdjust = true;
 }

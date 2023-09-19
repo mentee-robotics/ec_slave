@@ -23,6 +23,7 @@
 #include "fdcan.h"
 #include "spi.h"
 #include "usart.h"
+#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -32,6 +33,13 @@
 #include <unistd.h>
 #include "uartDma.h"
 #include "SEGGER_SYSVIEW.h"
+
+/*  ZIV USB Testing start */
+
+#include "usbd_cdc.h"
+#include "usbd_cdc_if.h"
+#include "usb_device.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,7 +71,64 @@ void MX_FREERTOS_Init(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
+/* USER CODE BEGIN 0*/
+
+
+
+
+
+void cdc_printf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    // Calculate the size needed for the formatted string
+    int len = vsnprintf(NULL, 0, format, args);
+    va_end(args);
+
+    if (len <= 0)
+        return;
+
+    // Allocate a buffer for the formatted string
+    char buffer[len + 1]; // +1 for null-terminator
+
+    // Format the string into the buffer
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+
+    // Transmit the formatted string over USB CDC
+    CDC_Transmit_FS((uint8_t*)buffer, len);
+}
+
+
+
+
+
+void measure(uint32_t timestamp){
+
+	static uint32_t holder[100];
+	static uint8_t counter =0;
+
+	holder[counter++] = timestamp;
+	char pre = '@';
+	char end = '\n';
+	if (counter >= 100){
+		for (uint8_t i =0; i<100;++i)
+			cdc_printf("%d\t%u\n",i, holder[i]);
+		/*CDC_Transmit_FS(&pre,1);
+		CDC_Transmit_FS(&holder, sizeof(holder));
+		CDC_Transmit_FS(&end,1);*/
+		counter = 0;
+	}
+
+
+}
+uint32_t GetCycleCount(void)
+{
+    return DWT->CYCCNT; // Read cycle counter value
+}
+
 
 /* USER CODE END 0 */
 
@@ -99,8 +164,11 @@ int main(void)
   MX_FDCAN1_Init();
   MX_SPI1_Init();
   MX_USART1_UART_Init();
+  MX_USB_Device_Init();
   /* USER CODE BEGIN 2 */
   /* Configure and initialize SystemView */
+
+
   SEGGER_SYSVIEW_Conf();
 
   /* USER CODE END 2 */
@@ -139,8 +207,9 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;

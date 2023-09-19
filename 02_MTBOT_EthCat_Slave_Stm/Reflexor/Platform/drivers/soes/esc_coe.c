@@ -1456,19 +1456,21 @@ void ESC_coeprocess (void)
       /* continue get OD list */
       SDO_getodlistcont ();
    }
-   if (ESCvar.xoe == MBXCOE)
-   {
+   if (ESCvar.xoe == MBXCOE)   {
       coesdo = (_COEsdo *) &MBX[0];
       coeobjdesc = (_COEobjdesc *) &MBX[0];
       service = etohs (coesdo->coeheader.numberservice) >> 12;
       if (service == COE_SDOREQUEST)
       {
+
          if ((SDO_COMMAND(coesdo->command) == COE_COMMAND_UPLOADREQUEST)
                && (etohs (coesdo->mbxheader.length) == COE_HEADERSIZE))
          {
+        	 if(0) cdc_printf("COE_COMMAND_UPLOADREQUEST @%u\r\n", GetCycleCount());
             /* initiate SDO upload request */
             if (SDO_COMPLETE_ACCESS(coesdo->command))
             {
+
                SDO_upload_complete_access ();
             }
             else
@@ -1507,6 +1509,7 @@ void ESC_coeprocess (void)
          if ((service == COE_SDOINFORMATION)
                && (coeobjdesc->infoheader.opcode == 0x01))
          {
+        	 if(0) cdc_printf("SDO_get OD list @ %u\r\n", GetCycleCount());
             SDO_getodlist ();
          }
          /* initiate SDO get OD */
@@ -1515,6 +1518,7 @@ void ESC_coeprocess (void)
             if ((service == COE_SDOINFORMATION)
                   && (coeobjdesc->infoheader.opcode == 0x03))
             {
+            	if(0) cdc_printf("SDO_get object desc @ %u\r\n", GetCycleCount());
                SDO_getod ();
             }
             /* initiate SDO get ED */
@@ -1523,6 +1527,7 @@ void ESC_coeprocess (void)
                if ((service == COE_SDOINFORMATION)
                      && (coeobjdesc->infoheader.opcode == 0x05))
                {
+            	   if(0)cdc_printf("SDO_get entry desc @ %u\r\n", GetCycleCount());
                   SDO_geted ();
                }
                else

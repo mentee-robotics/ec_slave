@@ -1,0 +1,14 @@
+../Platform/drivers/soes/ecat_slv.c:43:10:ESC_download_pre_objecthandler	40	static
+../Platform/drivers/soes/ecat_slv.c:80:10:ESC_download_post_objecthandler	8	static
+../Platform/drivers/soes/ecat_slv.c:96:10:ESC_upload_pre_objecthandler	24	static
+../Platform/drivers/soes/ecat_slv.c:121:10:ESC_upload_post_objecthandler	8	static
+../Platform/drivers/soes/ecat_slv.c:134:6:APP_safeoutput	8	static
+../Platform/drivers/soes/ecat_slv.c:146:6:TXPDO_update	16	static
+../Platform/drivers/soes/ecat_slv.c:165:6:RXPDO_update	16	static
+../Platform/drivers/soes/ecat_slv.c:186:6:APP_setwatchdog	0	static
+../Platform/drivers/soes/ecat_slv.c:195:6:DIG_process	8	static
+../Platform/drivers/soes/ecat_slv.c:262:6:ecat_slv_worker	8	static
+../Platform/drivers/soes/ecat_slv.c:300:10:read_local_time	8	static
+../Platform/drivers/soes/ecat_slv.c:310:6:ecat_slv_poll	8	static
+../Platform/drivers/soes/ecat_slv.c:352:6:ecat_slv	8	static
+../Platform/drivers/soes/ecat_slv.c:362:6:ecat_slv_init	8	static

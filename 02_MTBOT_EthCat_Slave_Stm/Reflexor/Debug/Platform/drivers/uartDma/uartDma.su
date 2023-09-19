@@ -1,0 +1,7 @@
+../Platform/drivers/uartDma/uartDma.c:45:7:uartDma_init	8	static
+../Platform/drivers/uartDma/uartDma.c:51:7:uartDma_rx_check	0	static
+../Platform/drivers/uartDma/uartDma.c:56:7:uartDma_process_data	0	static
+../Platform/drivers/uartDma/uartDma.c:81:10:uartDma_start_tx_dma_transfer	16	static
+../Platform/drivers/uartDma/uartDma.c:61:7:uartDma_send_string	16	static
+../Platform/drivers/uartDma/uartDma.c:105:6:HAL_UART_TxCpltCallback	8	static
+../Platform/drivers/uartDma/uartDma.c:114:7:uartDma_main	0	static

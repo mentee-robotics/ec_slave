@@ -1,0 +1,11 @@
+../Platform/drivers/soes/esc_foe.c:147:17:FOE_fwrite	32	static
+../Platform/drivers/soes/esc_foe.c:187:17:FOE_fclose	16	static
+../Platform/drivers/soes/esc_foe.c:53:17:FOE_fopen	32	static
+../Platform/drivers/soes/esc_foe.c:283:17:FOE_send_ack	8	static
+../Platform/drivers/soes/esc_foe.c:203:6:FOE_init	0	static
+../Platform/drivers/soes/esc_foe.c:217:13:FOE_abort	8	static
+../Platform/drivers/soes/esc_foe.c:533:13:FOE_error	8	static
+../Platform/drivers/soes/esc_foe.c:393:13:FOE_write	8	static
+../Platform/drivers/soes/esc_foe.c:435:13:FOE_data	8	static
+../Platform/drivers/soes/esc_foe.c:545:6:FOE_config	0	static
+../Platform/drivers/soes/esc_foe.c:555:6:ESC_foeprocess	8	static

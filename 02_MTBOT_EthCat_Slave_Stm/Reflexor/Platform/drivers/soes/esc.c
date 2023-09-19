@@ -534,8 +534,12 @@ void MBX_error (uint16_t error)
  *
  * @return =0 if nothing to do. =1 if something to be handled by mailbox protocols.
  */
+
+
+
 uint8_t ESC_mbxprocess (void)
 {
+
    uint8_t mbxhandle = 0;
    _MBXh *MBh = (_MBXh *)&MBX[0];
 
@@ -556,6 +560,8 @@ uint8_t ESC_mbxprocess (void)
    if (ESCvar.mbxoutpost && (ESCvar.ALevent & ESCREG_ALEVENT_SM1))
    {
       ESC_ackmbxread ();
+      //cdc_printf("%u\n", read_local_time());
+      measure(read_local_time());
       /* dispose old backup */
       if (ESCvar.mbxbackup)
       {
@@ -570,7 +576,9 @@ uint8_t ESC_mbxprocess (void)
       MBXcontrol[ESCvar.mbxoutpost].state = MBXstate_backup;
       ESCvar.mbxbackup = ESCvar.mbxoutpost;
       ESCvar.mbxoutpost = 0;
+
       /* Do we have any ongoing protocol transfers, return 1 */
+
       if(ESCvar.xoe > 0)
       {
          return 1;
@@ -604,6 +612,8 @@ uint8_t ESC_mbxprocess (void)
          ESCvar.SM[1].PDIrep = ESCvar.toggle & 0x1U;
          ESC_SMwritepdi (1);
       }
+
+
       return 0;
    }
 
@@ -646,8 +656,11 @@ uint8_t ESC_mbxprocess (void)
          MBXcontrol[0].state = MBXstate_idle;
       }
       ESCvar.mbxincnt = MBh->mbxcnt;
+
+
       return 1;
    }
+
 
    return 0;
 }

@@ -50,7 +50,7 @@ void AppTest_CanIdle_MainFunction ()
    uint8_t cmd = 0;
    uint8_t length = 0;
    uint8_t dataCmd[ETHCAT_LENGTH_DATAMAX] = {0};
-   
+   //cdc_printf("[appTest main]@%u:\t %d\n",GetCycleCount(), appTest.testCase);
    switch (appTest.testCase)
    {
    case APPTEST_CANIDLE_NO:
