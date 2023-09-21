@@ -9,6 +9,8 @@
 #include "esc_eoe.h"
 #include "ecat_slv.h"
 
+#include "main.h"
+
 #define IS_RXPDO(index) ((index) >= 0x1600 && (index) < 0x1800)
 #define IS_TXPDO(index) ((index) >= 0x1A00 && (index) < 0x1C00)
 
@@ -311,19 +313,22 @@ void ecat_slv_poll (void)
 {
 
    /* Read local time from ESC*/
-
+   sendMessage(ETHCat,1,0);
    ESC_read (ESCREG_LOCALTIME, (void *) &ESCvar.Time, sizeof (ESCvar.Time));
    ESCvar.Time = etohl (ESCvar.Time);
+   sendMessage(ETHCat,1,1);
 
+   //cdc_printf("poll %u, %u %u\n", ESCvar.Time, (uint32_t)(reader>>32)  , (uint32_t)(reader&0xffffffff ));
    /* Check the state machine */
    ESC_state();
-
+   sendMessage(ETHCat,1,2);
    /* Check the SM activation event */
    ESC_sm_act_event();
-
+   sendMessage(ETHCat,1,3);
    /* Check mailboxes */
    if (ESC_mbxprocess())
    {
+	   sendMessage(ETHCat,1,5);
 	  //cdc_printf("mailbox event@%u\r\n", GetCycleCount());
       ESC_coeprocess();
 #if USE_FOE

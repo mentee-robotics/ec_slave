@@ -86,7 +86,28 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
+typedef enum {
+	Debug =0,
+	ETHCat,
+	canIdle,
+	canIdle_scan,
+	canIde_bringUp_motor,
+	canM,
+	canM_command,
+	canM_response,
+
+
+}messageOrigin;
+
+typedef struct {
+	uint64_t timestamp; // in nanoseconds
+	uint32_t params[5];
+	messageOrigin origin;
+
+
+}logMessageStruct;
 /* USER CODE END Private defines */
+
 
 #ifdef __cplusplus
 }

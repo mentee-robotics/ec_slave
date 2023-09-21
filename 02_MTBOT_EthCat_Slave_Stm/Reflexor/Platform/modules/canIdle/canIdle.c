@@ -231,7 +231,7 @@ static void canIdle_GenericFrame(tCanIdle_Data *const app)
    pMd80dev = (tMd80_Device *)&md80Dev[md80Id];
 
    /* Base on command. */
-
+   sendMessage(canIde_bringUp_motor, 2, cmd, md80Id);
    cdc_printf("@%u\t[Bring up Motor Command]:\t %s for %d\r\n",xTaskGetTickCount()/portTICK_PERIOD_MS,frameTypeName((tMd80_FrameId) cmd) ,md80Id);
 		   //cdc_printf("[Bring up Motor Command]@%u:\t %s for %d\r\n",GetCycleCount(),frameTypeName((tMd80_FrameId) cmd) ,md80Id);
     //cdc_printf("[Bring up Motor Command]@%u:\t %d\r\n",GetCycleCount(),cmd );
@@ -929,7 +929,9 @@ void canIdle_UpdateCmd (uint8_t md80id, uint8_t command, uint8_t size, uint8_t *
 
       /* Exit critical section. */
       taskEXIT_CRITICAL();
+
       cdc_printf("@%u\t[canM command]:\t%s for %d\r\n", Obj.md80_Respond.timestamp, busFrameTypeName(command), md80id);
+      sendMessage(canM_command, 3, Obj.md80_Respond.timestamp, busFrameTypeName(command), md80id);
    }
    else
    {

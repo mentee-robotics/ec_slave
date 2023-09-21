@@ -71,7 +71,32 @@ void MX_FREERTOS_Init(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0*/
+/* USER CODE BEGIN 0 */
+logMessageStruct logMessage;
+void sendMessage(messageOrigin origin, uint8_t paramCount,...){
+	va_list args;
+	va_start(args, paramCount);
+	uint8_t buffer[40];
+	buffer[0] ='$'; // size is 1 for pre and 32 for size of logmessage
+	uint8_t *source = (uint8_t *)&logMessage;
+	uint8_t *destination = (uint8_t *)&buffer[1];
+	logMessage.origin = origin;
+	ESC_read (0x0910, (void *) &logMessage.timestamp, 8);
+	memset(logMessage.params , 0, sizeof(logMessage.params )); // clear to zeros
+	for (int i = 0; i < paramCount; i++) {
+	        uint32_t param = va_arg(args, uint32_t);
+	        logMessage.params[i]=  param;
+	}
+	for (size_t i = 0; i < sizeof(logMessageStruct); i++) {
+	    destination[i] = source[i];
+	}
+	buffer[1+sizeof(logMessageStruct)] ='\n';
+	//memcpy((uint8_t * )&buffer[1],(uint8_t *) &logMessage, sizeof(logMessageStruct));
+	//for (uint8_t i =0; i<sizeof(logMessageStruct);i++)
+		//buffer[1+i] = (uint8_t *)(&logMessage +i);
+	CDC_Transmit_FS((uint8_t*)&buffer, sizeof(logMessageStruct)+2);
+	//CDC_Transmit_FS((uint8_t*)&logMessage, 32);
+}
 
 
 
@@ -111,14 +136,11 @@ void measure(uint32_t timestamp){
 	static uint8_t counter =0;
 
 	holder[counter++] = timestamp;
-	char pre = '@';
-	char end = '\n';
+;
 	if (counter >= 100){
 		for (uint8_t i =0; i<100;++i)
 			cdc_printf("%d\t%u\n",i, holder[i]);
-		/*CDC_Transmit_FS(&pre,1);
-		CDC_Transmit_FS(&holder, sizeof(holder));
-		CDC_Transmit_FS(&end,1);*/
+
 		counter = 0;
 	}
 

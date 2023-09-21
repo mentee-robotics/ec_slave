@@ -15,8 +15,8 @@
 ../Platform/modules/canIdle/canIdle.c:814:13:busFrameTypeName	0	static
 ../Platform/modules/canIdle/canIdle.c:845:13:canIdle_UpdateResp	16	static
 ../Platform/modules/canIdle/canIdle.c:773:24:canIdle_Command_Exit	8	static
-../Platform/modules/canIdle/canIdle.c:908:6:canIdle_UpdateCmd	24	static
-../Platform/modules/canIdle/canIdle.c:940:6:canIdle_Init	8	static
-../Platform/modules/canIdle/canIdle.c:946:6:canIdle_Deinit	0	static
-../Platform/modules/canIdle/canIdle.c:951:13:tCanIdle_StatesName	0	static
-../Platform/modules/canIdle/canIdle.c:970:6:canIdle_MainFunction	8	static
+../Platform/modules/canIdle/canIdle.c:908:6:canIdle_UpdateCmd	32	static
+../Platform/modules/canIdle/canIdle.c:942:6:canIdle_Init	8	static
+../Platform/modules/canIdle/canIdle.c:948:6:canIdle_Deinit	0	static
+../Platform/modules/canIdle/canIdle.c:953:13:tCanIdle_StatesName	0	static
+../Platform/modules/canIdle/canIdle.c:972:6:canIdle_MainFunction	8	static

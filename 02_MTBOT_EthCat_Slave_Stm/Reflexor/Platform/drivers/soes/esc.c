@@ -7,7 +7,7 @@
 #include "esc.h"
 #include "esc_coe.h"
 #include "esc_foe.h"
-
+#include "main.h"
 /** \file
  * \brief
  * Base EtherCAT functions for handling the Data Link Layer and Malilboxes
@@ -542,7 +542,7 @@ uint8_t ESC_mbxprocess (void)
 
    uint8_t mbxhandle = 0;
    _MBXh *MBh = (_MBXh *)&MBX[0];
-
+   sendMessage(ETHCat,2,4,1);
    if (ESCvar.MBXrun == 0)
    {
       /* nothing to do */
@@ -555,13 +555,15 @@ uint8_t ESC_mbxprocess (void)
       ESC_SMstatus (0);
       ESC_SMstatus (1);
    }
-
+   sendMessage(ETHCat,2,4,2);
    /* outmbx read by master */
    if (ESCvar.mbxoutpost && (ESCvar.ALevent & ESCREG_ALEVENT_SM1))
    {
+	   sendMessage(ETHCat,3,4,2,1);
       ESC_ackmbxread ();
+      sendMessage(ETHCat,3,4,4,2);
       //cdc_printf("%u\n", read_local_time());
-      measure(read_local_time());
+      //measure(read_local_time());
       /* dispose old backup */
       if (ESCvar.mbxbackup)
       {
@@ -585,7 +587,7 @@ uint8_t ESC_mbxprocess (void)
       }
       return 0;
    }
-
+   sendMessage(ETHCat,2,4,3);
    /* repeat request */
    if (ESCvar.SM[1].ECrep != ESCvar.toggle)
    {
@@ -616,7 +618,7 @@ uint8_t ESC_mbxprocess (void)
 
       return 0;
    }
-
+   sendMessage(ETHCat,2,4,4);
    /* if the outmailbox is free check if we have something to send */
    if (ESCvar.txcue && (ESCvar.mbxfree || !ESCvar.SM[1].MBXstat))
    {
@@ -637,7 +639,7 @@ uint8_t ESC_mbxprocess (void)
          }
       }
    }
-
+   sendMessage(ETHCat,2,4,5);
    /* read mailbox if full and no xoe in progress */
    if ((ESCvar.SM[0].MBXstat != 0) && (MBXcontrol[0].state == 0)
          && (ESCvar.mbxoutpost == 0) && (ESCvar.xoe == 0))
@@ -661,7 +663,7 @@ uint8_t ESC_mbxprocess (void)
       return 1;
    }
 
-
+   sendMessage(ETHCat,2,4,6);
    return 0;
 }
 /** Handler for incorrect or unsupported mailbox data. Write error response

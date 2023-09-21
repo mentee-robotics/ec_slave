@@ -155,13 +155,15 @@ void ethCat_Init (void)
 
 void ethCat_MainFunction (void)
 {
-	uint32_t start=0;
-	uint32_t end =0;
-	start = GetCycleCount();
+	static uint32_t start=0;
+	static uint32_t end =0;
+	start = DWT->CYCCNT;//GetCycleCount();
 
 	ecat_slv();
-	end= GetCycleCount();
-	if(false) cdc_printf("ecat_slv took: %d\r\n",end-start);
+	end= DWT->CYCCNT;//GetCycleCount();
+
+
+
 }
 
 void timerCounterCb(void const * argument)

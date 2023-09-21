@@ -157,19 +157,21 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of appTest */
-  osThreadDef(appTest, appTestTask, osPriorityLow, 0, 128);
-  appTestHandle = osThreadCreate(osThread(appTest), NULL);
+  //osThreadDef(appTest, appTestTask, osPriorityLow, 0, 128);
+  //appTestHandle = osThreadCreate(osThread(appTest), NULL);
 
   /* definition and creation of ethCat */
   osThreadDef(ethCat, ethCatTask, osPriorityRealtime, 0, 1024);
   ethCatHandle = osThreadCreate(osThread(ethCat), NULL);
 
-  /* definition and creation of canM */
-  osThreadDef(canM, canMTask, osPriorityHigh, 0, 1024);
+  /* definition and creation of canM
+  osThreadDef(canM, canMTask, osPriorityHigh, 0, 1024);*/
+  osThreadDef(canM, canMTask, osPriorityNormal, 0, 1024);
   canMHandle = osThreadCreate(osThread(canM), NULL);
 
-  /* definition and creation of canIdle */
-  osThreadDef(canIdle, canIdleTask, osPriorityAboveNormal, 0, 512);
+  /* definition and creation of canIdle
+  osThreadDef(canIdle, canIdleTask, osPriorityAboveNormal, 0, 512);*/
+  osThreadDef(canIdle, canIdleTask, osPriorityNormal, 0, 512);
   canIdleHandle = osThreadCreate(osThread(canIdle), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -193,9 +195,9 @@ void appTestTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    AppTest_MainFunction();
 
-    osDelay(1);
+    AppTest_MainFunction();
+    osDelay(100);
   }
   /* USER CODE END appTestTask */
 }
@@ -219,7 +221,8 @@ void ethCatTask(void const * argument)
     /* Run main function of ethCat. */
     ethCat_MainFunction();
 
-    osDelay(1);
+    for(uint16_t i=0; i< 100;i++);
+    //osDelay(1);
   }
   /* USER CODE END ethCatTask */
 }
@@ -231,39 +234,12 @@ void ethCatTask(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_canMTask */
-
-//#define ZplayingWithCDC
-#ifdef ZplayingWithCDC
-
-
-/* Ziv testing usb printf 29AUG23
-int _write(int file, char *ptr, int len)
-{
-	//USBD_HandleTypeDef hUsbDeviceFS;
-    // Check if USB CDC is initialized
-    if (hUsbDeviceFS.dev_state != USBD_STATE_CONFIGURED)
-    {
-        return -1; // Return an error if USB CDC is not configured
-    }
-
-    // Transmit data over USB CDC
-    CDC_Transmit_FS((uint8_t*)ptr, len);
-
-    return len;
-}
-*/
-/*   End Of testing */
-
-
-
-
-USBD_CDC_HandleTypeDef hcdc;
 void canMTask(void const * argument)
 {
   /* USER CODE BEGIN canMTask */
   canM_Init (&canM_Module);
 
-  uint8_t buffer[64] = "Testing printer\r\n";
+  /*uint8_t buffer[64] = "Testing printer\r\n";
   uint8_t buffer2[64] = "got some data\r\n";
   uint8_t buffer3[20] = "Got something\r\n";
   bool led =false;
@@ -285,7 +261,7 @@ while(1){
 	  led = !led;
   //}
 }
-
+*/
 
   /* Infinite loop */
   for(;;)
@@ -297,31 +273,6 @@ while(1){
   }
   /* USER CODE END canMTask */
 }
-
-#else
-void canMTask(void const * argument)
-{
-  /* USER CODE BEGIN canMTask */
-  canM_Init (&canM_Module);
-
-  /* Infinite loop */
-  for(;;)
-  {
-
-    /* Run main function of canM. */
-    canM_MainFunction (&canM_Module);
-    //vTaskDelay(160);
-    osDelay(1);
-  }
-  /* USER CODE END canMTask */
-}
-
-#endif
-
-
-
-
-
 
 /* USER CODE BEGIN Header_canIdleTask */
 /**
