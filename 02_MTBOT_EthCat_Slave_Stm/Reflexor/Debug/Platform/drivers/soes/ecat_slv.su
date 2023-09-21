@@ -9,6 +9,6 @@
 ../Platform/drivers/soes/ecat_slv.c:197:6:DIG_process	8	static
 ../Platform/drivers/soes/ecat_slv.c:264:6:ecat_slv_worker	8	static
 ../Platform/drivers/soes/ecat_slv.c:302:10:read_local_time	8	static
-../Platform/drivers/soes/ecat_slv.c:312:6:ecat_slv_poll	8	static
-../Platform/drivers/soes/ecat_slv.c:357:6:ecat_slv	8	static
-../Platform/drivers/soes/ecat_slv.c:367:6:ecat_slv_init	8	static
+../Platform/drivers/soes/ecat_slv.c:313:6:ecat_slv_poll	8	static
+../Platform/drivers/soes/ecat_slv.c:367:6:ecat_slv	8	static
+../Platform/drivers/soes/ecat_slv.c:377:6:ecat_slv_init	8	static

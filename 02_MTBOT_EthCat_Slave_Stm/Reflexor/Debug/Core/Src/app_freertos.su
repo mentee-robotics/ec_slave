@@ -1,10 +1,10 @@
-../Core/Src/app_freertos.c:301:13:timerCounterCb	0	static
-../Core/Src/app_freertos.c:212:6:ethCatTask	8	static
-../Core/Src/app_freertos.c:237:6:canMTask	8	static
-../Core/Src/app_freertos.c:284:6:canIdleTask	8	static
+../Core/Src/app_freertos.c:299:13:timerCounterCb	0	static
+../Core/Src/app_freertos.c:188:6:appTestTask	8	static
+../Core/Src/app_freertos.c:210:6:ethCatTask	8	static
+../Core/Src/app_freertos.c:235:6:canMTask	8	static
+../Core/Src/app_freertos.c:282:6:canIdleTask	8	static
 ../Core/Src/app_freertos.c:86:13:configureTimerForRunTimeStats	0	static
 ../Core/Src/app_freertos.c:91:22:getRunTimeCounterValue	0	static
 ../Core/Src/app_freertos.c:98:13:vApplicationIdleHook	0	static
 ../Core/Src/app_freertos.c:113:6:vApplicationDaemonTaskStartupHook	8	static
-../Core/Src/app_freertos.c:128:6:MX_FREERTOS_Init	88	static
-../Core/Src/app_freertos.c:190:6:appTestTask	8	static
+../Core/Src/app_freertos.c:128:6:MX_FREERTOS_Init	112	static

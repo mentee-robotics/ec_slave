@@ -309,26 +309,36 @@ uint32_t read_local_time(){
  * when only SM2/DC interrupt is active.
  * Read and handle events for the EtherCAT state, status, mailbox and eeprom.
  */
+//#define testSend
 void ecat_slv_poll (void)
 {
 
    /* Read local time from ESC*/
-   sendMessage(ETHCat,1,0);
+#ifdef testSend
+	sendMessage(ETHCat,1,0);
+#endif
    ESC_read (ESCREG_LOCALTIME, (void *) &ESCvar.Time, sizeof (ESCvar.Time));
    ESCvar.Time = etohl (ESCvar.Time);
+#ifdef testSend
    sendMessage(ETHCat,1,1);
-
+#endif
    //cdc_printf("poll %u, %u %u\n", ESCvar.Time, (uint32_t)(reader>>32)  , (uint32_t)(reader&0xffffffff ));
    /* Check the state machine */
    ESC_state();
+#ifdef testSend
    sendMessage(ETHCat,1,2);
+#endif
    /* Check the SM activation event */
    ESC_sm_act_event();
+#ifdef testSend
    sendMessage(ETHCat,1,3);
+#endif
    /* Check mailboxes */
    if (ESC_mbxprocess())
    {
+#ifdef testSend
 	   sendMessage(ETHCat,1,5);
+#endif
 	  //cdc_printf("mailbox event@%u\r\n", GetCycleCount());
       ESC_coeprocess();
 #if USE_FOE

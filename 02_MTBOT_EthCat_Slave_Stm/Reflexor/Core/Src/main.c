@@ -77,7 +77,7 @@ void sendMessage(messageOrigin origin, uint8_t paramCount,...){
 	va_list args;
 	va_start(args, paramCount);
 	uint8_t buffer[40];
-	buffer[0] ='$'; // size is 1 for pre and 32 for size of logmessage
+	buffer[0] ='$'; // size is 1 for pre and 32 for size of logmessage and some extras to avoid faults. the pre is for pcorssing in the parser host side.
 	uint8_t *source = (uint8_t *)&logMessage;
 	uint8_t *destination = (uint8_t *)&buffer[1];
 	logMessage.origin = origin;
@@ -96,7 +96,7 @@ void sendMessage(messageOrigin origin, uint8_t paramCount,...){
 		//buffer[1+i] = (uint8_t *)(&logMessage +i);
 	CDC_Transmit_FS((uint8_t*)&buffer, sizeof(logMessageStruct)+2);
 	//CDC_Transmit_FS((uint8_t*)&logMessage, 32);
-}
+	}
 
 
 
@@ -146,6 +146,7 @@ void measure(uint32_t timestamp){
 
 
 }
+
 uint32_t GetCycleCount(void)
 {
     return DWT->CYCCNT; // Read cycle counter value
@@ -190,6 +191,14 @@ int main(void)
   /* USER CODE BEGIN 2 */
   /* Configure and initialize SystemView */
 
+
+//while(1){
+	//HAL_WWDG_Refresh(&hwwdg);
+	//HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, GPIO_PIN_SET);
+	//osDelay(5);
+	//HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, GPIO_PIN_RESET);
+	//osDelay(5);
+//}
 
   SEGGER_SYSVIEW_Conf();
 

@@ -157,21 +157,19 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of appTest */
-  //osThreadDef(appTest, appTestTask, osPriorityLow, 0, 128);
-  //appTestHandle = osThreadCreate(osThread(appTest), NULL);
+  osThreadDef(appTest, appTestTask, osPriorityIdle, 0, 128);
+  appTestHandle = osThreadCreate(osThread(appTest), NULL);
 
   /* definition and creation of ethCat */
   osThreadDef(ethCat, ethCatTask, osPriorityRealtime, 0, 1024);
   ethCatHandle = osThreadCreate(osThread(ethCat), NULL);
 
-  /* definition and creation of canM
-  osThreadDef(canM, canMTask, osPriorityHigh, 0, 1024);*/
-  osThreadDef(canM, canMTask, osPriorityNormal, 0, 1024);
+  /* definition and creation of canM */
+  osThreadDef(canM, canMTask, osPriorityHigh, 0, 1024);
   canMHandle = osThreadCreate(osThread(canM), NULL);
 
-  /* definition and creation of canIdle
-  osThreadDef(canIdle, canIdleTask, osPriorityAboveNormal, 0, 512);*/
-  osThreadDef(canIdle, canIdleTask, osPriorityNormal, 0, 512);
+  /* definition and creation of canIdle */
+  osThreadDef(canIdle, canIdleTask, osPriorityAboveNormal, 0, 512);
   canIdleHandle = osThreadCreate(osThread(canIdle), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */

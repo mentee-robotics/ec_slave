@@ -86,7 +86,7 @@ uint32_t ethCat_object_download_hook ( uint16_t index,
          cdc_printf("Md80 id: %d\n", md80id);
          cdc_printf("counter: %d", (int)Obj.md80_Command.counter);
          cdc_printf(" at Time: %d\n", (int)Obj.md80_Last_Command_Received.timestamp);
-         cdc_printf("DataCmd received: \n");*/
+         cdc_printf("DataCmd received: \n");
          for (int i = 0; i < sizeof(dataCmd); i++)
          {
             printf("%02X", dataCmd[i]);
@@ -157,12 +157,13 @@ void ethCat_MainFunction (void)
 {
 	static uint32_t start=0;
 	static uint32_t end =0;
-	start = DWT->CYCCNT;//GetCycleCount();
 
+	//start = DWT->CYCCNT;//GetCycleCount();
+	//start = xTaskGetTickCount()/portTICK_PERIOD_MS;
 	ecat_slv();
-	end= DWT->CYCCNT;//GetCycleCount();
-
-
+	//end= DWT->CYCCNT;//GetCycleCount();
+	//end= xTaskGetTickCount()/portTICK_PERIOD_MS;
+	//sendMessage(ETHCat,2,666, (end-start));
 
 }
 
@@ -171,6 +172,8 @@ void timerCounterCb(void const * argument)
 #if ETHCAT_DUMMYDATA_500US == 1
    /* Update the counter dummy for md80: 1ms */
    Obj.md80_0_DataReturn.counter++;
-   Obj.md80_0_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount()/portTICK_PERIOD_MS);
+
+   Obj.md80_0_DataReturn.timestamp = (uint32_t)(DWT->CYCCNT/160);
+   //Obj.md80_0_DataReturn.timestamp = (uint32_t)(xTaskGetTickCount()/portTICK_PERIOD_MS);
 #endif
 }

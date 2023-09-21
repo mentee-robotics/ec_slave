@@ -108,7 +108,6 @@ typedef struct {
 }logMessageStruct;
 /* USER CODE END Private defines */
 
-
 #ifdef __cplusplus
 }
 #endif

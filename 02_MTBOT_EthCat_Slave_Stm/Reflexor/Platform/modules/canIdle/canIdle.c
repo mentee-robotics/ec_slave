@@ -719,8 +719,8 @@ static tCanIdle_States canIdle_Command(tCanIdle_Data *const app)
 {
    tCanIdle_States nextState = CANIDLE_COMMAND;
 
-   //cdc_printf("[canIdle_Command]@%u:\t %s\ for %d\r\n",GetCycleCount(),busFrameName(app->hostReq.frId),app->cmd.motorId );
-   cdc_printf("@%u\t[canIdle]:\tH:%s for %d\r\n",xTaskGetTickCount()/portTICK_PERIOD_MS,busFrameName(app->hostReq.frId), app->cmd.motorId );
+   cdc_printf("[canIdle_Command]@%u:\t %s\ for %d\r\n",GetCycleCount(),busFrameName(app->hostReq.frId),app->cmd.motorId );
+   //cdc_printf("@%u\t[canIdle]:\tH:%s for %d\r\n",xTaskGetTickCount()/portTICK_PERIOD_MS,busFrameName(app->hostReq.frId), app->cmd.motorId );
    switch (app->hostReq.frId)
    {
    case BUS_FRAME_NONE:

@@ -542,7 +542,9 @@ uint8_t ESC_mbxprocess (void)
 
    uint8_t mbxhandle = 0;
    _MBXh *MBh = (_MBXh *)&MBX[0];
+#ifdef testSend
    sendMessage(ETHCat,2,4,1);
+#endif
    if (ESCvar.MBXrun == 0)
    {
       /* nothing to do */
@@ -555,13 +557,19 @@ uint8_t ESC_mbxprocess (void)
       ESC_SMstatus (0);
       ESC_SMstatus (1);
    }
+#ifdef testSend
    sendMessage(ETHCat,2,4,2);
+#endif
    /* outmbx read by master */
    if (ESCvar.mbxoutpost && (ESCvar.ALevent & ESCREG_ALEVENT_SM1))
    {
+#ifdef testSend
 	   sendMessage(ETHCat,3,4,2,1);
+#endif
       ESC_ackmbxread ();
+#ifdef testSend
       sendMessage(ETHCat,3,4,4,2);
+#endif
       //cdc_printf("%u\n", read_local_time());
       //measure(read_local_time());
       /* dispose old backup */
@@ -587,7 +595,9 @@ uint8_t ESC_mbxprocess (void)
       }
       return 0;
    }
+#ifdef testSend
    sendMessage(ETHCat,2,4,3);
+#endif
    /* repeat request */
    if (ESCvar.SM[1].ECrep != ESCvar.toggle)
    {
@@ -618,7 +628,9 @@ uint8_t ESC_mbxprocess (void)
 
       return 0;
    }
+#ifdef testSend
    sendMessage(ETHCat,2,4,4);
+#endif
    /* if the outmailbox is free check if we have something to send */
    if (ESCvar.txcue && (ESCvar.mbxfree || !ESCvar.SM[1].MBXstat))
    {
@@ -639,7 +651,9 @@ uint8_t ESC_mbxprocess (void)
          }
       }
    }
+#ifdef testSend
    sendMessage(ETHCat,2,4,5);
+#endif
    /* read mailbox if full and no xoe in progress */
    if ((ESCvar.SM[0].MBXstat != 0) && (MBXcontrol[0].state == 0)
          && (ESCvar.mbxoutpost == 0) && (ESCvar.xoe == 0))
@@ -662,8 +676,9 @@ uint8_t ESC_mbxprocess (void)
 
       return 1;
    }
-
+#ifdef testSend
    sendMessage(ETHCat,2,4,6);
+#endif
    return 0;
 }
 /** Handler for incorrect or unsupported mailbox data. Write error response
