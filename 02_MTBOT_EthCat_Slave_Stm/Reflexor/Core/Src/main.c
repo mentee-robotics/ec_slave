@@ -191,6 +191,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   /* Configure and initialize SystemView */
 
+  SCB->CCR |= SCB_CCR_DIV_0_TRP_Msk; // Enable fault trapping
 
 //while(1){
 	//HAL_WWDG_Refresh(&hwwdg);
