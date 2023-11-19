@@ -159,6 +159,9 @@ uint32_t GetCycleCount(void)
   * @brief  The application entry point.
   * @retval int
   */
+
+uint8_t inBuffer[RX_BUFFER_SIZE];
+uint8_t usbRxEvent;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -169,7 +172,7 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
+  usbRxEvent = 0;
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */

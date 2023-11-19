@@ -84,7 +84,7 @@ extern tCanIdle_Data canIdle_Module;
  *-------------------------------------------------------------------------------------------------------------------*/
 
 extern void canIdle_UpdateCmd (uint8_t md80id, uint8_t command, uint8_t size, uint8_t * cmd);
-extern void canIdle_Init (void);
+extern void canIdle_Init (tMd80_Baudrate);
 extern void canIdle_MainFunction (void);
 
 #endif /* CANIDLE_H_  */

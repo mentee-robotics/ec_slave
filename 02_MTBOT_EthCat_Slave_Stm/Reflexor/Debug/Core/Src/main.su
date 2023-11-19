@@ -2,8 +2,8 @@
 ../Core/Src/main.c:105:6:cdc_printf	32	dynamic
 ../Core/Src/main.c:133:6:measure	8	static
 ../Core/Src/main.c:150:10:GetCycleCount	0	static
-../Core/Src/main.c:284:6:HAL_TIM_PeriodElapsedCallback	8	static
-../Core/Src/main.c:301:6:Error_Handler	0	static,ignoring_inline_asm
-../Core/Src/main.c:230:6:SystemClock_Config	88	static
-../Core/Src/main.c:162:5:main	8	static
-../Core/Src/main.c:320:6:assert_failed	0	static
+../Core/Src/main.c:287:6:HAL_TIM_PeriodElapsedCallback	8	static
+../Core/Src/main.c:304:6:Error_Handler	0	static,ignoring_inline_asm
+../Core/Src/main.c:233:6:SystemClock_Config	88	static
+../Core/Src/main.c:165:5:main	8	static
+../Core/Src/main.c:323:6:assert_failed	0	static

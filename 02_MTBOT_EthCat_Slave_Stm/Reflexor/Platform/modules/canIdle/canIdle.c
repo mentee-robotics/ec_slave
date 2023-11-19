@@ -939,10 +939,10 @@ void canIdle_UpdateCmd (uint8_t md80id, uint8_t command, uint8_t size, uint8_t *
    }
 }
 
-void canIdle_Init()
+void canIdle_Init(tMd80_Baudrate rate)
 {
    /* Configuration the baudrate of CAN to 1M. */
-   canM_SetNewBaudrate(CAN_BAUD_1M);
+   canM_SetNewBaudrate(rate);
 }
 
 void canIdle_Deinit()
