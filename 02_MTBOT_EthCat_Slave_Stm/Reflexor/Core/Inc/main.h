@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#define RX_BUFFER_SIZE 256
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -86,6 +86,26 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
+typedef enum {
+	Debug =0,
+	ETHCat,
+	canIdle,
+	canIdle_scan,
+	canIde_bringUp_motor,
+	canM,
+	canM_command,
+	canM_response,
+
+
+}messageOrigin;
+
+typedef struct {
+	uint64_t timestamp; // in nanoseconds
+	uint32_t params[5];
+	messageOrigin origin;
+
+
+}logMessageStruct;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

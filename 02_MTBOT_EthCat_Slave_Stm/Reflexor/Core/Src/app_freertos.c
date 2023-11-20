@@ -153,7 +153,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of appTest */
-  osThreadDef(appTest, appTestTask, osPriorityLow, 0, 128);
+  osThreadDef(appTest, appTestTask, osPriorityIdle, 0, 128);
   appTestHandle = osThreadCreate(osThread(appTest), NULL);
 
   /* definition and creation of ethCat */
